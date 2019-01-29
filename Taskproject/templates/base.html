@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+
+{% load staticfiles %}
+
+<html lang="en">
+
+<head>
+	
+	<meta charset="UTF-8">
+	
+	<title>Task Manager</title>
+	
+	<link rel="stylesheet" href="{% static "css/bootstrap.css" %}">
+	
+	<link rel="stylesheet" href="{% static "css/jquery-ui.min.css" %}">
+	
+	<link rel="stylesheet" href="{% static "css/style.css" %}">
+	
+	<link rel="stylesheet" href="{% static "css/font-awesome.min.css" %}">
+	
+</head>
+
+
+<body>
+	
+	<nav class="navbar navbar-expand-lg navbar-light gradient sticky-top">
+		
+		<div class="container">
+			
+			<a class="navbar-brand" href="{% url 'home' %}">
+				
+				<img src="{% static "img/logo.png" %}" width="75px" alt="Logo">
+				
+			</a>
+			
+			<button class="navbar-toggler" data-target="#mainNav" data-toggle="collapse"><span class="navbar-toggler-icon"></span></button>
+			
+			<div class="collapse navbar-collapse" id="mainNav">
+				
+				<ul class="navbar-nav ml-auto">
+					
+					{% if user.is_authenticated %}					
+					
+						<li class="nav-item"><a href="{% url 'taskapp:task_list' %}" class="nav-link">Tasks</a></li>
+						
+						<li class="nav-item"><a href="" class="nav-link">Groups</a></li>
+						
+						<li class="nav-item"><a href="" class="nav-link"><i class="fa fa-smile-o fa-2x text-white"></i></a></li>
+						
+						<li class="nav-item"><a href="{% url 'accounts:logout' %}" class="nav-link">Log out</a></li>
+										
+					{% else %}
+					
+						<li class="nav-item"><a href="{% url 'accounts:signup' %}" class="nav-link">Sign up</a></li>
+						
+						<li class="nav-item"><a href="{% url 'accounts:login' %}" class="nav-link">Login</a></li>
+					
+					{% endif %}
+					
+				</ul>
+				
+			</div>
+			
+		</div>
+		
+	</nav>
+
+	{% block body_block %}
+	
+		<h1>Hello world from base.html. The main base file</h1>
+		
+		<footer class="bg-secondary text-center">
+			
+			<p class="m-0 py-4">Created by
+				
+				<strong>
+					
+					<a href="https://brianmwevi.github.io" class="card-link">Brian Mwevi</a>
+					
+				</strong>
+				
+				<br>
+				
+				Copyrights &copy; 2018
+				
+			</p>
+					
+			<p class="m-0"></p>
+			
+		</footer>
+	
+	{% endblock body_block %}
+	
+
+
+	
+	<script src="{% static "js/jquery.min.js" %}"></script>
+	
+	<script src="{% static "js/popper.min.js" %}"></script>
+	
+	<script src="{% static "js/bootstrap.min.js" %}"></script>
+
+	<script src="{% static "js/custom.js" %}"></script>
+	
+</body>
+
+</html>

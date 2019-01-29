@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% load bootstrap4 %}
+
+
+
+{% block body_block %}
+
+<section class="home-bg py-5">
+	
+	<div class="container">
+		
+		<div class="row">
+			
+			<div class="offset-4 gradient p-5 mx-auto">
+				
+				<form class="user-form" method="POST">
+					
+				  {% csrf_token %}
+				  
+				  {% bootstrap_form form %}
+				  
+				  <div class="text-center">
+				  	
+				    <input class="btn btn-info" type="submit" name="user_submit" value="SIGN UP">
+				    
+				    <p>Already have an account? <a href="{% url 'accounts:login' %}" class="card-link text-primary">Log in</a></p>
+				    
+				  </div>
+				  
+				</form>
+				
+			</div>
+			
+		</div>
+		
+	</div>
+	
+</section>
+
+{% endblock body_block %}
+

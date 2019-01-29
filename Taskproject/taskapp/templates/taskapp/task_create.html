@@ -1,0 +1,11 @@
+{# {% extends 'bootstrap4/bootstrap4.html' %} #}
+{% load bootstrap4 %}
+<form method="POST">
+	{% csrf_token %}
+	{% bootstrap_form form %}
+
+	<div class="text-center">
+		<input type="submit" class="btn btn-info" value="Create">
+	</div>
+
+</form>

@@ -1,0 +1,43 @@
+.home-bg {
+    background-image: linear-gradient(to right bottom, rgba(126, 213, 111, 0.8), rgba(40, 180, 133, 0.8)), url(../img/home.jpg);
+	background-attachment: fixed;
+	background-position: center center;
+	background-size: cover;
+	height: 100vh;
+}
+
+.gradient {
+	background:linear-gradient(to left,rgba(126, 213, 111, 0.8),rgba(40, 180, 133, 0.8));
+}
+
+.gradient1 {
+	background:linear-gradient(to left,rgba(126, 213, 111, 0.8),rgba(40, 180, 133, 0.8));
+}
+
+.gradient2 {
+	background-color: rgba(40, 180, 133, 0.5);
+}
+
+.task_height {
+	height: 500px !important;
+}
+
+.form_create:focus {
+	box-shadow: 0 0 0 0 !important;
+}
+
+.hide {
+	display: none;
+}
+
+.form_create {
+	border: none;
+	background-color: transparent !important;
+
+}
+
+.form_create:focus {
+	box-shadow: 0 0 0 0 !important;
+	border: 0;
+	background-color: transparent;
+}

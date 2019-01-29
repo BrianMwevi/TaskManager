@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% load bootstrap4 %}
+
+{% block body_block %}
+
+<section class="home-bg py-5">
+
+	<div class="container">
+
+		<div class="row">
+
+			<div class="col-md-6 mx-auto p-5 gradient">
+
+				<h4 class="text-center text-shadow pb-3">Be productive!</h4>
+
+				<form class="login-form" method="POST">
+
+					{% csrf_token %}
+
+					{% bootstrap_form form %}
+
+					<div class="text-center py-4">
+
+						<input class="btn btn-info" type="submit" name="loginform" value="LOG IN">
+
+						<input type="hidden" name="next" value="{{ next_page }}">
+
+					</div>
+
+				</form>
+
+			</div>
+
+		</div>
+
+	</div>
+
+</section>
+
+{% endblock body_block %}
+
