@@ -8,14 +8,15 @@ from accounts.api.serializers import UserDisplaySerializer
 
 
 class TaskModelSerializer(serializers.ModelSerializer):
-	user = UserDisplaySerializer(read_only=True)
+	user = UserDisplaySerializer(read_only=True,)
+	# category = serializers.RelatedField(read_only=True, many=True)
 	created_date = serializers.SerializerMethodField()
 
 	class Meta:
 
 		model = Task
 
-		fields = [
+		fields = (
 			'id',
 			'user',
 			'title',
@@ -23,7 +24,7 @@ class TaskModelSerializer(serializers.ModelSerializer):
 			'category',
 			'created_date',
 
-		]
+		)
 
 	def get_created_date(self, obj):
 		return "Past " + timesince(obj.created_date)

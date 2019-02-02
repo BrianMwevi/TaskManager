@@ -1,6 +1,8 @@
 from django.shortcuts import render
-from django.views.generic import ListView,CreateView
+from django.views.generic import ListView,CreateView, UpdateView
 from django.urls import reverse_lazy
+
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 from .models import Task
@@ -10,7 +12,7 @@ class TaskListView(ListView):
 	model = Task
 
 
-class TaskCreateView(CreateView):
+class TaskCreateView(LoginRequiredMixin, CreateView):
 	queryset = Task.objects.all()
 	fields = ['title', 'content']
 	template_name = "taskapp/task_list.html"
@@ -21,3 +23,8 @@ class TaskCreateView(CreateView):
 		form.instance.user = self.request.user
 
 		return super().form_valid(form)
+
+
+class TaskUpdateView(LoginRequiredMixin, UpdateView):
+	model = Task
+	fields = ['title', 'content']

@@ -11,10 +11,10 @@ from .serializers import TaskModelSerializer
 from taskapp.models import Task
 
 
-class TaskList(ListAPIView):
+class TaskNewList(ListAPIView):
 	serializer_class = TaskModelSerializer
 
-	queryset = Task.objects.all().order_by("-created_date")
+	queryset = Task.objects.all()
 
 class TaskCreate(CreateAPIView):
 	serializer_class = TaskModelSerializer
@@ -22,5 +22,11 @@ class TaskCreate(CreateAPIView):
 
 	def perform_create(self, serializer):
 		serializer.save(user=self.request.user)
-	# model = Task
-	# fields = ['title', 'detail']
+
+
+class TaskUpdate(UpdateAPIView):
+	serializer_class = TaskModelSerializer
+	permission_classes = [permissions.IsAuthenticated]
+
+	def perform_update(self, serializer):
+		instance = serializer.save()
