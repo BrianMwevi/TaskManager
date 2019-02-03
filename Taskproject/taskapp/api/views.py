@@ -14,7 +14,11 @@ from taskapp.models import Task
 class TaskNewList(ListAPIView):
 	serializer_class = TaskModelSerializer
 
-	queryset = Task.objects.all()
+	def get_queryset(self, *args, **kwargs):
+		user_tasks = Task.objects.filter(user__exact=self.request.user)
+		print(user_tasks.count())
+		# tasksk = Task.objects.filter()
+		return user_tasks
 
 class TaskCreate(CreateAPIView):
 	serializer_class = TaskModelSerializer

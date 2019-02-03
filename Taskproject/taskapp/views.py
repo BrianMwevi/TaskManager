@@ -10,6 +10,10 @@ from .models import Task
 
 class TaskListView(ListView):
 	model = Task
+	def get_context_data(self, **kwargs):
+	    context = super(TaskListView, self).get_context_data(**kwargs)
+	    context['create_url'] = reverse_lazy("taskapp:task_create")
+	    return context
 
 
 class TaskCreateView(LoginRequiredMixin, CreateView):
