@@ -4,9 +4,6 @@ var requestSent = false;
 // Fetching all the tasks when the document is ready
 $(document).ready(function(){
     fetchTasks();
-    $(".task-card").hover(function(){
-        alert("Hovered!")
-    })
    
 })
 
@@ -18,6 +15,7 @@ function parseTasks(data){
     })
 
 }
+
 function loopTasks(cat, created, updated){
        
         var taskId = cat.id;
@@ -29,7 +27,7 @@ function loopTasks(cat, created, updated){
                             <div class='form-group'><textarea name='content' class='form_create form-control border-0' required='' autofocus=''>" + detail + "</textarea></div>\
                             <input type='submit' class='btn gradient' value='Update' id='submit" + taskId + "'" + "></form></div><div id='card" + taskId + "'" + " class='task-card gradient card my-1'><div class='card-body p-2'><h5 class='d-inline'> " + title +
                             "</h5><span class='float-right'><i class='btn btn-sm fa fa-pencil px-2 text-success' onclick='updateForm()' id='" + taskId + "'" + ">\
-                            </i><i class='close btn fa fa-close px-2' onclick='deleteTask()' id='" + taskId + "'" + "></i></span><small><br>" + createdDate + "</small></div>"
+                            </i><i class='delete btn fa fa-close px-2 py-1' onclick='deleteTask()' id='" + taskId + "'" + "></i></span><small><br>" + createdDate + "</small></div>"
         
         if (cat.category == 1) {
 
@@ -37,15 +35,16 @@ function loopTasks(cat, created, updated){
             
             new1.append(tasksDisplay);
             
-            console.log(new1)
-
         } else if (cat.category == 2) {
             var inprogress = $("#inprogressTasks");
             inprogress.append(tasksDisplay);
             
         }
-        else {
-            $("#completedTasks").append(tasksDisplay)
+        else if(cat.category === 3) {
+            $("#completedTasks").append(tasksDisplay);
+            var thisClass = $(".fa-close")
+            $(thisClass).removeClass("fa-close")
+            $(thisClass).addClass("fa-trash")
         }
         // htmlParser()
 
