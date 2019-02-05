@@ -99,6 +99,11 @@
 	<script src="{% static "js/popper.min.js" %}"></script>
 	
 	<script src="{% static "js/bootstrap.min.js" %}"></script>
+	{% csrf_token %}
+	<script type="text/javascript">
+	// using jQuery
+	var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+	</script>
 
 	<script src="{% static "js/custom.js" %}"></script>
 	
