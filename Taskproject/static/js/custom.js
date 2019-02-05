@@ -4,7 +4,9 @@ var requestSent = false;
 // Fetching all the tasks when the document is ready
 $(document).ready(function(){
     fetchTasks();
-
+    $(".task-card").hover(function(){
+        alert("Hovered!")
+    })
    
 })
 
@@ -25,9 +27,9 @@ function loopTasks(cat, created, updated){
         var tasksDisplay = "<form method='POST' class='gradient d-none' id='form" + taskId + "'" + "><input type='hidden'  name='csrfmiddlewaretoken' value='" + formTokenValue + "'" + " id='token" + taskId + "'" + "><div></div><div class='form-group'>\
                             <span closeUpdate'><i class='btn fa fa-close float-right btn-dark rounded p-1 m-1' id='close" + taskId + "'" + " ></i></span><input type='text' class='form-control form_create border-0' required value='" + title+ "'" + " name='title' autofocus=''></div>\
                             <div class='form-group'><textarea name='content' class='form_create form-control border-0' required='' autofocus=''>" + detail + "</textarea></div>\
-                            <input type='submit' class='btn gradient' value='Update' id='submit" + taskId + "'" + "></form></div><div id='card" + taskId + "'" + " class='card my-1 gradient'><div class='card-body p-2'><h5 class='d-inline'> " + title +
+                            <input type='submit' class='btn gradient' value='Update' id='submit" + taskId + "'" + "></form></div><div id='card" + taskId + "'" + " class='task-card gradient card my-1'><div class='card-body p-2'><h5 class='d-inline'> " + title +
                             "</h5><span class='float-right'><i class='btn btn-sm fa fa-pencil px-2 text-success' onclick='updateForm()' id='" + taskId + "'" + ">\
-                            </i><i class='btn fa fa-close px-2' onclick='deleteTask()' id='" + taskId + "'" + "></i></span><small><br>" + createdDate + "</small></div>"
+                            </i><i class='close btn fa fa-close px-2' onclick='deleteTask()' id='" + taskId + "'" + "></i></span><small><br>" + createdDate + "</small></div>"
         
         if (cat.category == 1) {
 
@@ -104,6 +106,8 @@ function createForm(){
     });
 };
 
+
+
 // Updating existing tasks
 function updateForm(){
     var thisId = event.target.id; // getting id of the task to be edited
@@ -171,6 +175,7 @@ function deleteTask() {
    dbDelete(thisId, url)
 }
 
+// Delete the hidden element in the DB
 function dbDelete(taskId, url) {
     $.ajax({
         url     : url,
