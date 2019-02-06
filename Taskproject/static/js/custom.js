@@ -23,10 +23,10 @@ function loopTasks(cat, created, updated){
         var detail = cat.content;
         var createdDate = cat.created_date;
         var tasksDisplay = "<form method='POST' class='gradient d-none' id='form" + taskId + "'" + "><input type='hidden'  name='csrfmiddlewaretoken' value='" + formTokenValue + "'" + " id='token" + taskId + "'" + "><div></div><div class='form-group'>\
-                            <span closeUpdate'><i class='btn fa fa-close float-right btn-dark rounded p-1 m-1' id='close" + taskId + "'" + " ></i></span><input type='text' class='form-control form_create border-0' required value='" + title+ "'" + " name='title' autofocus=''></div>\
+                            <span closeUpdate'><i class='btn fa fa-close float-right btn-dark rounded p-2' id='close" + taskId + "'" + " ></i></span><input type='text' class='form-control form_create border-0' required value='" + title+ "'" + " name='title' autofocus=''></div>\
                             <div class='form-group'><textarea name='content' class='form_create form-control border-0' required='' autofocus=''>" + detail + "</textarea></div>\
                             <input type='submit' class='btn gradient' value='Update' id='submit" + taskId + "'" + "></form></div><div id='card" + taskId + "'" + " class='task-card gradient card my-1'><div class='card-body p-2'><h5 class='d-inline'> " + title +
-                            "</h5><span class='float-right'><i class='btn btn-sm fa fa-pencil px-2 text-success' onclick='updateForm()' id='" + taskId + "'" + ">\
+                            "</h5><span class='float-right'><i class='edit btn btn-sm fa fa-pencil mx-2 text-success' onclick='updateForm()' id='" + taskId + "'" + ">\
                             </i><i class='delete btn fa fa-close px-2 py-1' onclick='deleteTask()' id='" + taskId + "'" + "></i></span><small><br>" + createdDate + "</small></div>"
         
         if (cat.category == 1) {
@@ -40,9 +40,9 @@ function loopTasks(cat, created, updated){
             inprogress.append(tasksDisplay);
             
         }
-        else if(cat.category === 3) {
+        else  {
             $("#completedTasks").append(tasksDisplay);
-            var thisClass = $(".fa-close")
+            var thisClass = $(".delete.fa-close")
             $(thisClass).removeClass("fa-close")
             $(thisClass).addClass("fa-trash")
         }

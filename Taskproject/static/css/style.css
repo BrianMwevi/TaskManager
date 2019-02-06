@@ -3,7 +3,9 @@
 	background-attachment: fixed;
 	background-position: center center;
 	background-size: cover;
+	max-width: 100%;
 	height: 100vh;
+	position: relative;
 }
 
 .gradient {
@@ -47,7 +49,13 @@
 	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
+.edit:hover {
+	color:#fff !important;
+	background:linear-gradient(to left,rgba(126, 213, 111, 0.8),rgba(40, 180, 133, 0.8));
+	border-radius: 5px;
+}
+
 .delete:hover {
-	color: white;
-	background: red;
+	color: #fff;
+	background:red;
 }
