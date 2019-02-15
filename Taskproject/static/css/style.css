@@ -59,3 +59,7 @@
 	color: #fff;
 	background:red;
 }
+
+.defaultHeight {
+	min-height: 30rem !important;
+}

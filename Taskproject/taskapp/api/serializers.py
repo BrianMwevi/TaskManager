@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from django.utils.timesince import timesince
 
-from taskapp.models import Task, Category
+from taskapp.models import Task
 
 from accounts.api.serializers import UserDisplaySerializer
 

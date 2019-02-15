@@ -37,12 +37,15 @@ class TaskUpdate(RetrieveUpdateAPIView):
 	permission_classes = [permissions.IsAuthenticated]
 	authentication_classes = [authentication.SessionAuthentication]
 	lookup_field = "pk"	
-
+	
 	def get_queryset(self, *args, **kwargs):
 		tasks =  Task.objects.all()
-		print(Task.objects.all().count())
 		return tasks
 
+	# def perform_update(self, serializer):
+	# 	serializer.save(category="1")
+
+	
 class TaskDelete(DestroyAPIView):
 	serializer_class = TaskModelSerializer
 	permission_classes = [permissions.IsAuthenticated]

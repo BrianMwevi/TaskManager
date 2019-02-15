@@ -16,28 +16,43 @@ function parseTasks(data){
 
 }
 
+// var doing = $("#inprogressTasks");
+
 function loopTasks(cat, created, updated){
-       
+        // Tasks categories
+        var cat1 = [];
+        var cat2 = [];
+        var cat3 = [];
+
+        // Tasks categories ids
+
+
         var taskId = cat.id;
         var title = cat.title;
         var detail = cat.content;
+        var taskCat = cat.category;
         var createdDate = cat.created_date;
-        var tasksDisplay = "<form method='POST' class='gradient d-none' id='form" + taskId + "'" + "><input type='hidden'  name='csrfmiddlewaretoken' value='" + formTokenValue + "'" + " id='token" + taskId + "'" + "><div></div><div class='form-group'>\
-                            <span closeUpdate'><i class='btn fa fa-close float-right btn-dark rounded p-2' id='close" + taskId + "'" + " ></i></span><input type='text' class='form-control form_create border-0' required value='" + title+ "'" + " name='title' autofocus=''></div>\
-                            <div class='form-group'><textarea name='content' class='form_create form-control border-0' required='' autofocus=''>" + detail + "</textarea></div>\
-                            <input type='submit' class='btn gradient' value='Update' id='submit" + taskId + "'" + "></form></div><div id='card" + taskId + "'" + " class='task-card gradient card my-1'><div class='card-body p-2'><h5 class='d-inline'> " + title +
+        var tasksDisplay = "<form method='POST' class='gradient d-none' id='form" + taskId + "'" + "><input type='hidden' name='category' value='" + taskCat + "' id='cat" + taskId +"'" + "><input type='hidden'  name='csrfmiddlewaretoken' value='" + formTokenValue + "'" + " id='token" + taskId + "'" + "><div></div><div class='form-group'>\
+                            <span closeUpdate'><i class='btn fa fa-close float-right btn-dark rounded p-2' id='close" + taskId + "'" + " ></i></span><input type='text' class='form-control form_create border-0' required value='" + title+ "'" + " name='title' autofocus='' id='title" + taskId + "'" + "></div>\
+                            <div class='form-group'><textarea name='content' class='form_create form-control border-0' required='' autofocus='' id='detail" + taskId + "'" + ">" + detail + "</textarea></div>\
+                            <input type='submit' class='btn gradient' value='Update' id='submit" + taskId + "'" + "></form></div><div draggable='true' ondragstart='drag(event)' id='card" + taskId + "'" + " class='task-card gradient card my-1'><div class='card-body p-2'><h5 class='d-inline'> " + title +
                             "</h5><span class='float-right'><i class='edit btn btn-sm fa fa-pencil mx-2 text-success' onclick='updateForm()' id='" + taskId + "'" + ">\
                             </i><i class='delete btn fa fa-close px-2 py-1' onclick='deleteTask()' id='" + taskId + "'" + "></i></span><small><br>" + createdDate + "</small></div>"
         
         if (cat.category == 1) {
+            cat1.push(tasksDisplay)
 
             var new1 = $("#waiting");
             
             new1.append(tasksDisplay);
             
         } else if (cat.category == 2) {
-            var inprogress = $("#inprogressTasks");
-            inprogress.append(tasksDisplay);
+            cat2.push(tasksDisplay)
+            var doing = $("#inprogressTasks");
+           
+            
+            doing.append(cat2);
+            
             
         }
         else  {
@@ -46,9 +61,55 @@ function loopTasks(cat, created, updated){
             $(thisClass).removeClass("fa-close")
             $(thisClass).addClass("fa-trash")
         }
+        
         // htmlParser()
 
     }
+
+// Drag and drop
+
+function allowDrop(ev) {
+    ev.preventDefault();
+
+
+}
+
+
+function drag(ev) {
+    ev.dataTransfer.setData("text", ev.target.id);
+    // console.log(this)
+
+}
+
+function drop(ev, el) {
+    ev.preventDefault();
+    var data = ev.dataTransfer.getData("text");
+    el.appendChild(document.getElementById(data));
+    // var elTest = el.appendChild(document.getElementById(data));
+
+    var thisId = data.substring("4");
+    var sendUrl = "/api/tasks/update/" + thisId + "/"
+    
+    var targeted = (ev.currentTarget.id);
+    console.log($("#cat" + thisId).val());
+    if (targeted == "waiting") {
+        $("#cat" + thisId).val("1");
+        $("#waitingTasks" +  thisId).prepend(taskForm);
+    } else if (targeted == "inprogress") {
+        $("#cat" + thisId).val("2");
+    } else {
+        $("#cat" + thisId).val("3");
+    }
+    console.log($("#cat" + thisId).val());
+    var taskForm = document.getElementById("form"+thisId);
+    var data = $(taskForm).serialize()
+    
+
+
+    updateTask(data, sendUrl, thisId, false)
+
+
+}
 
 
 // Feeds the Html file with tasks
@@ -117,6 +178,8 @@ function updateForm(){
         event.preventDefault();
         var thisData = $(this);
         var formData = thisData.serialize();
+        // console.log("Not serialized" + thisData)
+        // console.log("serialized" + formData)
 
         updateTask(formData, formUrl, thisId)
     });
@@ -144,7 +207,7 @@ function csrfSafeMethod(method) {
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
 
-function updateTask(formData, sendUrl, taskId){
+function updateTask(formData, sendUrl, taskId, refetch){
 
     
     
@@ -159,7 +222,11 @@ function updateTask(formData, sendUrl, taskId){
         },
         success : function(data){
             $("#form" + taskId).slideUp()
-            loopTasks(data, true)
+            if (!refetch) {
+                console.log("False")
+            } else {
+                loopTasks(data, true)
+        }
         },
         errors : function(data){
             alert("Errors")
