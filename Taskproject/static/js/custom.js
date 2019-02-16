@@ -23,8 +23,10 @@ function loopTasks(cat, updated){
     var detail = cat.content;
     var taskCat = cat.category;
     var createdDate = cat.created_date;
-    var tasksDisplay = "<form method='POST' class='gradient d-none' id='form" + taskId + "'" + "><input type='hidden' name='category' value='" + taskCat + "' id='cat" + taskId +"'" + "><input type='hidden'  name='csrfmiddlewaretoken' value='" + formTokenValue + "'" + " id='token" + taskId + "'" + "><div></div><div class='form-group'>\
-                        <span closeUpdate'><i class='btn fa fa-close float-right btn-dark rounded p-2' id='close" + taskId + "'" + " ></i></span><input type='text' class='form-control form_create border-0' required value='" + title+ "'" + " name='title' autofocus='' id='title" + taskId + "'" + "></div>\
+    var tasksDisplay = "<form method='POST' class='gradient collapse' id='form" + taskId + "'" + "><input type='hidden' name='category' value='" + taskCat + "' id='cat" + taskId +"'" +
+                        "><input type='hidden'  name='csrfmiddlewaretoken' value='" + formTokenValue + "'" + " id='token" + taskId + "'" + "><div></div><div class='form-group'>\
+                        <span closeUpdate'><i class='btn fa fa-close float-right btn-dark rounded p-2' id='close" + taskId + "'" + " ></i></span><input type='text'\
+                        class='form-control form_create border-0' required value='" + title+ "'" + " name='title' autofocus='' id='title" + taskId + "'" + "></div>\
                         <div class='form-group'><textarea name='content' class='form_create form-control border-0' required='' autofocus='' id='detail" + taskId + "'" + ">" + detail + "</textarea></div>\
                         <input type='submit' class='btn gradient' value='Update' id='submit" + taskId + "'" + "></form></div><div draggable='true' ondragstart='drag(event)' id='card" + taskId + "'" + " class='card collapse task-card gradient my-1'><div class='card-body p-2'><h5 class='d-inline'> " + title +
                         "</h5><span class='float-right'><i class='edit btn btn-sm fa fa-pencil mx-2 text-success' onclick='updateForm()' id='" + taskId + "'" + ">\
@@ -32,8 +34,10 @@ function loopTasks(cat, updated){
     
     if (cat.category == 1) {
         var new1 = $("#waitingTasks");
+
         if (updated) {
-            new1.after(tasksDisplay);
+            console.log(taskId)
+            $("#card" + taskId).replaceWith(tasksDisplay);
         } else {
             new1.before(tasksDisplay);
         }
@@ -152,42 +156,30 @@ function updateForm(){
 
     var thisId = event.target.id; // getting id of the task to be edited
     var formId = $("#form" + thisId);
+    var cardId = $("#card" + thisId);
     var formUrl = "/api/tasks/update/" + thisId + "/"
 
-    // Toggle the form and hiding the task
-    function submitForm() {
-        formId.removeClass("d-none").fadeOut(0, function(){
-            $(this).show(250)
-        });
-        $("#card" + thisId).toggle(200)
-        formId.submit(function(){
-            event.preventDefault();
-            var thisData = $(this);
-            var formData = thisData.serialize();
-            toggleTask(true)
+    // Hide task and show form
+    $(formId).show(200, function(){
+        $(cardId).slideUp(100);
+    })
 
-            updateTask(formData, formUrl, thisId)
-        });
-    }
-    submitForm()
+    // Hide form and show task
+    $("#close" + thisId).click(function(){
+        $(formId).hide(250, function(){
+            $(cardId).slideDown(100)
+        })
+    })
 
-    function toggleTask(submitted) {
-        if (submitted) {
-            $("#form" + thisId).remove()
-        } else {
-            // $("#card" + thisId).toggle(300)
-        }
-    }
+    // Submit data, hide form, hide task
+    $(formId).submit(function(event){
+        event.preventDefault()
+        $(formId).hide(1000)
+        var formData = $(this).serialize()
+        updateTask(formData, formUrl, thisId)
+        // $(cardId).show(100);
+    })
 
-    function closeForm() {
-        $("#close" + thisId).click(function(){
-            $("#card" + thisId).show(250);
-            formId.slideUp(250, function(){
-                $(this).addClass("d-none").css("display", "block");
-            })
-        });
-    }
-    closeForm()
 }
 
 // Ajax post call
@@ -209,6 +201,7 @@ function updateTask(formData, sendUrl, taskId){
         },
         success : function(data){
                 loopTasks(data, true)
+                $("#card" + taskId).show(100)
         },
         errors : function(data){
             alert("Errors")
