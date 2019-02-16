@@ -63,3 +63,11 @@
 .defaultHeight {
 	min-height: 30rem !important;
 }
+
+.new {
+	transform: scale(1);
+}
+
+.new:hover {
+	transform: scale(1.2);
+}
