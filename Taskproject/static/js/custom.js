@@ -16,8 +16,7 @@ function parseTasks(data){
     })
 }
 
-function loopTasks(cat, updated){
-
+function loopTasks(cat, updated, dropped){
     var taskId = cat.id;
     var title = cat.title;
     var detail = cat.content;
@@ -33,25 +32,28 @@ function loopTasks(cat, updated){
                         </i><i class='delete btn fa fa-close px-2 py-1' onclick='deleteTask()' id='delete" + taskId + "'" + "></i></span><small><br>" + createdDate + "</small></div>"
     
     if (cat.category == 1) {
-        var new1 = $("#waitingTasks");
-
         if (updated) {
-            console.log(taskId)
             $("#card" + taskId).replaceWith(tasksDisplay);
-        } else {
-            new1.before(tasksDisplay);
+        } else if(dropped) {
+            $("#waitingTasks").append(tasksDisplay);
+        }else {
+            $("#waitingTasks").before(tasksDisplay);
         }
         
     } else if (cat.category == 2) {
-        var doing = $("#inprogressTasks");
         if (updated) {
-            doing.after(tasksDisplay);
+           $("#card" + taskId).replaceWith(tasksDisplay);
         } else {
-            doing.before(tasksDisplay);
+            $("#inprogressTasks").before(tasksDisplay);
         }
     }
     else  {
-        $("#completedTasks").after(tasksDisplay);
+        if (updated) {
+           $("#card" + taskId).replaceWith(tasksDisplay);
+           // alert("Updating")
+        } else {
+            $("#completedTasks").before(tasksDisplay);
+        }
         var thisId = $("#delete" + taskId)
         $(thisId).removeClass("fa-close")
         $(thisId).addClass("fa-trash")
@@ -95,7 +97,7 @@ function drop(ev, el) {
     $(taskForm).remove()
     $("#card" + thisId).remove()
 
-    updateTask(data, sendUrl, thisId)
+    updateTask(data, sendUrl, thisId, true)
 }
 
 // Getting the tasks from the database
@@ -174,10 +176,9 @@ function updateForm(){
     // Submit data, hide form, hide task
     $(formId).submit(function(event){
         event.preventDefault()
-        $(formId).hide(1000)
+        $(formId).hide(250)
         var formData = $(this).serialize()
         updateTask(formData, formUrl, thisId)
-        // $(cardId).show(100);
     })
 
 }
@@ -188,7 +189,7 @@ function csrfSafeMethod(method) {
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
 
-function updateTask(formData, sendUrl, taskId){
+function updateTask(formData, sendUrl, taskId, dropped){
 
     $.ajax({
         url : sendUrl,
@@ -200,8 +201,13 @@ function updateTask(formData, sendUrl, taskId){
             }
         },
         success : function(data){
-                loopTasks(data, true)
+            if (dropped) {
+                loopTasks(data, false, dropped)
+            } else {
+                loopTasks(data, true, false)
                 $("#card" + taskId).show(100)
+            }
+                
         },
         errors : function(data){
             alert("Errors")
@@ -212,10 +218,9 @@ function updateTask(formData, sendUrl, taskId){
 function deleteTask() {
     var rawId = event.target.id;
     var thisId = rawId.substring("6")
-    alert(thisId)
-   $("#card" + thisId).slideUp(100);
-   url = "/api/tasks/delete/" + thisId + "/"
-   dbDelete(thisId, url)
+    $("#card" + thisId).slideUp(100);
+    url = "/api/tasks/delete/" + thisId + "/"
+    dbDelete(thisId, url)
 }
 
 // Delete the hidden element in the DB
