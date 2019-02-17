@@ -27,12 +27,12 @@ function emptyTask() {
         $("#waitingTasks #noNew").remove()
     }
     if (inprogress == 0) {
-        $("#inprogressTasks").html("<h4 id='noProgress' class='gradient text-center py-5'>No new Tasks!</h4>")
+        $("#inprogressTasks").html("<h4 id='noProgress' class='gradient text-center py-5'>No tasks inprogress!</h4>")
     } else {
         $("#inprogressTasks #noProgress").remove()
     }
     if (completed == 0) {
-        $("#completedTasks").html("<h4 id='noCompleted' class='gradient text-center py-5'>No new Tasks!</h4>")
+        $("#completedTasks").html("<h4 id='noCompleted' class='gradient text-center py-5'>No completed Tasks!</h4>")
     } else {
         $("#completedTasks #noCompleted").remove()
     }
@@ -201,6 +201,7 @@ function fetchTasks(){
 // Creating New Tasks
 function newTask() {
     $("#createForm").toggle(250)
+    $("#noNew").toggle(250)
 }
 
 
