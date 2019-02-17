@@ -7,6 +7,17 @@ $(document).ready(function(){
 
    
 })
+var waiting = 0;
+var inprogress = 0;
+var completed = 0;
+// Task summary
+function taskSummary() {
+    var totalTasks = waiting + inprogress + completed;
+    $("#numWaiting").text(waiting);
+    $("#numProgress").text(inprogress);
+    $("#numCompleted").text(completed);
+    $("#numTasks").text(totalTasks);
+}
 
 function parseTasks(data){
 
@@ -17,6 +28,7 @@ function parseTasks(data){
 }
 
 function loopTasks(cat, updated, dropped){
+
     var taskId = cat.id;
     var title = cat.title;
     var detail = cat.content;
@@ -30,34 +42,51 @@ function loopTasks(cat, updated, dropped){
                         <input type='submit' class='btn gradient' value='Update' id='submit" + taskId + "'" + "></form></div><div draggable='true' ondragstart='drag(event)' id='card" + taskId + "'" + " class='card collapse task-card gradient my-1'><div class='card-body p-2'><h5 class='d-inline'> " + title +
                         "</h5><span class='float-right'><i class='edit btn btn-sm fa fa-pencil mx-2 text-success' onclick='updateForm()' id='" + taskId + "'" + ">\
                         </i><i class='delete btn fa fa-close px-2 py-1' onclick='deleteTask()' id='delete" + taskId + "'" + "></i></span><small><br>" + createdDate + "</small></div>"
-    
+    // totalTasks += 1
     if (cat.category == 1) {
+        
         if (updated) {
             $("#card" + taskId).replaceWith(tasksDisplay);
         } else if(dropped) {
+            waiting += 1
             $("#waitingTasks").append(tasksDisplay);
+            // taskSummary()
         }else {
+            waiting += 1
+
             $("#waitingTasks").before(tasksDisplay);
         }
-        
+        taskSummary()
+
     } else if (cat.category == 2) {
+
         if (updated) {
-           $("#card" + taskId).replaceWith(tasksDisplay);
+            $("#card" + taskId).replaceWith(tasksDisplay);
+        } else if(dropped) {
+            inprogress += 1
+            $("#inprogressTasks").append(tasksDisplay);
         } else {
-            $("#inprogressTasks").before(tasksDisplay);
+            inprogress += 1
+            $("#inprogressTasks").append(tasksDisplay);
         }
+        taskSummary()
     }
     else  {
         if (updated) {
            $("#card" + taskId).replaceWith(tasksDisplay);
-           // alert("Updating")
+        } else if(dropped) {
+            completed += 1
+            $("#completedTasks").before(tasksDisplay);
         } else {
+            completed += 1
             $("#completedTasks").before(tasksDisplay);
         }
         var thisId = $("#delete" + taskId)
         $(thisId).removeClass("fa-close")
         $(thisId).addClass("fa-trash")
+        taskSummary()
     }
+
 }
 
 // Drag and drop
@@ -66,38 +95,63 @@ function allowDrop(ev) {
 
 
 }
+var whatCat;
 
 function drag(ev) {
     ev.dataTransfer.setData("text", ev.target.id);
-    // console.log(this)
+    var element = ev.currentTarget.id;
+    var thisId = element.substring("4")
 
+    whatCat = $("#cat" + thisId).val()
+    console.log(whatCat)
 }
 
 // On drop update the DB and delete the later
 function drop(ev, el) {
     ev.preventDefault();
+    
+    var calUpdate = false;    
     var data = ev.dataTransfer.getData("text");
-    el.appendChild(document.getElementById(data));
-
     var thisId = data.substring("4");
     var sendUrl = "/api/tasks/update/" + thisId + "/"    
     var targeted = (ev.currentTarget.id);
 
-    if (targeted == "waiting") {
-        $("#cat" + thisId).val("1");
-        // $("#waitingTasks" +  thisId).prepend(taskForm);
-    } else if (targeted == "inprogress") {
-        $("#cat" + thisId).val("2");
-    } else {
-        $("#cat" + thisId).val("3");
+    function checkCat() {
+        var cat = $("#cat" +  thisId).val();
+        if (cat == whatCat) {
+            calUpdate = false;  
+        } else {
+            calUpdate = true
+        }
     }
 
-    var taskForm = document.getElementById("form"+thisId);
-    var data = $(taskForm).serialize()
-    $(taskForm).remove()
-    $("#card" + thisId).remove()
+    if (targeted == "waiting") {
+        $("#cat" + thisId).val("1");
+        checkCat()
+    } else if (targeted == "inprogress") {
+        $("#cat" + thisId).val("2");
+        checkCat()
+    } else if (targeted == "completed") {
+        $("#cat" + thisId).val("3");
+        checkCat();
+    } else {
 
-    updateTask(data, sendUrl, thisId, true)
+        calUpdate = false;
+    }
+
+    
+    if (calUpdate) {
+        var taskForm = document.getElementById("form"+thisId);
+        var data = $(taskForm).serialize()
+        $(taskForm).remove()
+        $("#card" + thisId).remove()
+        updateTask(data, sendUrl, thisId, true)
+    } else {
+        // $("#card" + thisId).replaceWith(data)
+
+        console.log("Dropped in the same category!")
+    }
+    
 }
 
 // Getting the tasks from the database
@@ -109,6 +163,10 @@ function fetchTasks(){
         data : "data",
         success : function(data){
             parseTasks(data)
+            taskSummary()
+            var filter = ($("#waitingTasks").find())
+            // console.log(filter)
+
 
         },
         errors : function(data){

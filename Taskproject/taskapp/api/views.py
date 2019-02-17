@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 
 
 from rest_framework.generics import ListAPIView, ListCreateAPIView,RetrieveUpdateAPIView, DestroyAPIView
@@ -42,8 +43,9 @@ class TaskUpdate(RetrieveUpdateAPIView):
 		tasks =  Task.objects.all()
 		return tasks
 
-	# def perform_update(self, serializer):
-	# 	serializer.save(category="1")
+	def perform_update(self, serializer):
+		print(self.request.user)
+		serializer.save(started_date=timezone.now())
 
 	
 class TaskDelete(DestroyAPIView):

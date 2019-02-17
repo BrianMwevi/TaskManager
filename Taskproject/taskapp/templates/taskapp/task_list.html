@@ -24,6 +24,8 @@
 
 					<li class="list-group-item gradient"><small><strong id="numWaiting"></strong> tasks in waiting list</small></li>
 
+					<li class="list-group-item gradient"><small><strong id="numTasks"></strong> total tasks</small></li>
+
 					<li class="list-group-item gradient"><small><strong id="numHours">8</strong> total working hours</small></li>
 
 					<li class="list-group-item gradient"><small><strong id="numSuccess">87.5%</strong> success rate today</small></li>
@@ -35,7 +37,6 @@
 			</div>
 
 			<!-- TASK LIST VIEW -->
-			<!-- Wating tasks -->
 
 			<div class="col-sm-10">
 
@@ -47,24 +48,23 @@
 
 						<!-- Create task form -->
 
+						<form class="collapse gradient" id="createForm" method="POST">{% csrf_token %}
+							
+							<div class="form-group">
 
-							<form class="collapse gradient" id="createForm" method="POST">{% csrf_token %}
-								
-								<div class="form-group">
+								<input type="text" class="form-control bg-transparent form_create border-0" placeholder="Title" name="title"  autofocus="" required="">
+							</div>
 
-									<input type="text" class="form-control bg-transparent form_create border-0" placeholder="Title" name="title"  autofocus="" required="">
-								</div>
+							<div class="form-group">
 
-								<div class="form-group">
+								<textarea name="content" class="form-control bg-transparent form_create border-0" required placeholder="Detail" autofocus=""></textarea>
 
-									<textarea name="content" class="form-control bg-transparent form_create border-0" required placeholder="Detail" autofocus=""></textarea>
+							</div>
+							<button class="btn gradient" onclick="createForm()" type='submit'>Create</button>
 
-								</div>
-								<button class="btn gradient" onclick="createForm()" type='submit'>Create</button>
+						</form>
 
-							</form>
-
-						<!-- Actual task -->
+						<!-- Wating tasks -->
 						<div id="waitingTasks">
 
 						</div>
@@ -75,7 +75,7 @@
 
 						<h3 class="text-center"><i class="fa fa-square text-success"></i></h3>
 
-						<!-- Actual progress task -->
+						<!-- Progress tasks -->
 
 						<div id="inprogressTasks">
 							
