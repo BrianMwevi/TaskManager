@@ -1,15 +1,15 @@
 var formTokenValue = document.getElementsByName('csrfmiddlewaretoken')[0].value;
 var requestSent = false;
+var waiting = 0;
+var inprogress = 0;
+var completed = 0;
 
 // Fetching all the tasks when the document is ready
 $(document).ready(function(){
     fetchTasks();
-
-   
 })
-var waiting = 0;
-var inprogress = 0;
-var completed = 0;
+
+
 // Task summary
 function taskSummary() {
     var totalTasks = waiting + inprogress + completed;
@@ -17,10 +17,28 @@ function taskSummary() {
     $("#numProgress").text(inprogress);
     $("#numCompleted").text(completed);
     $("#numTasks").text(totalTasks);
+    
+}
+// If no task(s)
+function emptyTask() {
+    if (waiting == 0) {
+        $("#waitingTasks").html("<h4 id='noNew' class='gradient text-center py-5'>No new Tasks!</h4>")
+    } else {
+        $("#waitingTasks #noNew").remove()
+    }
+    if (inprogress == 0) {
+        $("#inprogressTasks").html("<h4 id='noProgress' class='gradient text-center py-5'>No new Tasks!</h4>")
+    } else {
+        $("#inprogressTasks #noProgress").remove()
+    }
+    if (completed == 0) {
+        $("#completedTasks").html("<h4 id='noCompleted' class='gradient text-center py-5'>No new Tasks!</h4>")
+    } else {
+        $("#completedTasks #noCompleted").remove()
+    }
 }
 
 function parseTasks(data){
-
     $.each(data, function(key, value){
         loopTasks(value)
 
@@ -42,7 +60,6 @@ function loopTasks(cat, updated, dropped){
                         <input type='submit' class='btn gradient' value='Update' id='submit" + taskId + "'" + "></form></div><div draggable='true' ondragstart='drag(event)' id='card" + taskId + "'" + " class='card collapse task-card gradient my-1'><div class='card-body p-2'><h5 class='d-inline'> " + title +
                         "</h5><span class='float-right'><i class='edit btn btn-sm fa fa-pencil mx-2 text-success' onclick='updateForm()' id='" + taskId + "'" + ">\
                         </i><i class='delete btn fa fa-close px-2 py-1' onclick='deleteTask()' id='delete" + taskId + "'" + "></i></span><small><br>" + createdDate + "</small></div>"
-    // totalTasks += 1
     if (cat.category == 1) {
         
         if (updated) {
@@ -50,7 +67,6 @@ function loopTasks(cat, updated, dropped){
         } else if(dropped) {
             waiting += 1
             $("#waitingTasks").append(tasksDisplay);
-            // taskSummary()
         }else {
             waiting += 1
 
@@ -86,14 +102,11 @@ function loopTasks(cat, updated, dropped){
         $(thisId).addClass("fa-trash")
         taskSummary()
     }
-
 }
 
 // Drag and drop
 function allowDrop(ev) {
     ev.preventDefault();
-
-
 }
 var whatCat;
 
@@ -103,13 +116,11 @@ function drag(ev) {
     var thisId = element.substring("4")
 
     whatCat = $("#cat" + thisId).val()
-    console.log(whatCat)
 }
 
 // On drop update the DB and delete the later
 function drop(ev, el) {
     ev.preventDefault();
-    
     var calUpdate = false;    
     var data = ev.dataTransfer.getData("text");
     var thisId = data.substring("4");
@@ -122,6 +133,15 @@ function drop(ev, el) {
             calUpdate = false;  
         } else {
             calUpdate = true
+
+            if (whatCat == 1) {
+                waiting -= 1    
+            } else if (whatCat == 2) {
+                inprogress -= 1
+            }
+            else {
+                completed -= 1
+            }
         }
     }
 
@@ -131,7 +151,7 @@ function drop(ev, el) {
     } else if (targeted == "inprogress") {
         $("#cat" + thisId).val("2");
         checkCat()
-    } else if (targeted == "completed") {
+    } else if (targeted == "complete") {
         $("#cat" + thisId).val("3");
         checkCat();
     } else {
@@ -145,9 +165,10 @@ function drop(ev, el) {
         var data = $(taskForm).serialize()
         $(taskForm).remove()
         $("#card" + thisId).remove()
+       
         updateTask(data, sendUrl, thisId, true)
+
     } else {
-        // $("#card" + thisId).replaceWith(data)
 
         console.log("Dropped in the same category!")
     }
@@ -164,8 +185,10 @@ function fetchTasks(){
         success : function(data){
             parseTasks(data)
             taskSummary()
+            emptyTask()
             var filter = ($("#waitingTasks").find())
             // console.log(filter)
+
 
 
         },
@@ -265,6 +288,7 @@ function updateTask(formData, sendUrl, taskId, dropped){
                 loopTasks(data, true, false)
                 $("#card" + taskId).show(100)
             }
+            emptyTask()
                 
         },
         errors : function(data){
