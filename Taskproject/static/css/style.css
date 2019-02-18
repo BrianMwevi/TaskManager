@@ -12,16 +12,13 @@
 	background:linear-gradient(to left,rgba(126, 213, 111, 0.8),rgba(40, 180, 133, 0.8));
 }
 
+
 .gradient1 {
 	background:linear-gradient(to left,rgba(126, 213, 111, 0.8),rgba(40, 180, 133, 0.8));
 }
 
 .gradient2 {
 	background-color: rgba(40, 180, 133, 0.5);
-}
-
-.task_height {
-	height: 500px !important;
 }
 
 .form_create:focus {
@@ -44,9 +41,35 @@
 	background-color: transparent;
 }
 
+/*Card dragstart*/
+.card-drag::before {
+	content: "";
+	position:absolute;
+	top:0;
+	left:0;
+	height: 100%;
+	width: 100%;
+	/*background: yellow;*/
+	z-index: 0;
+}
+
 /*Card hoover*/
 .task-card:hover {
 	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.edit {
+	position: absolute;
+	/*top: 0;*/
+	right: 2rem;
+	z-index: 1;
+}
+
+.delete {
+	position: absolute;
+	/*top: 0;*/
+	right: 0;
+	z-index: 1;
 }
 
 .edit:hover {

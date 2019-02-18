@@ -57,9 +57,9 @@ function loopTasks(cat, updated, dropped){
                         <span closeUpdate'><i class='btn fa fa-close float-right btn-dark rounded p-2' id='close" + taskId + "'" + " ></i></span><input type='text'\
                         class='form-control form_create border-0' required value='" + title+ "'" + " name='title' autofocus='' id='title" + taskId + "'" + "></div>\
                         <div class='form-group'><textarea name='content' class='form_create form-control border-0' required='' autofocus='' id='detail" + taskId + "'" + ">" + detail + "</textarea></div>\
-                        <input type='submit' class='btn gradient' value='Update' id='submit" + taskId + "'" + "></form></div><div draggable='true' ondragstart='drag(event)' id='card" + taskId + "'" + " class='card collapse task-card gradient my-1'><div class='card-body p-2'><h5 class='d-inline'> " + title +
-                        "</h5><span class='float-right'><i class='edit btn btn-sm fa fa-pencil mx-2 text-success' onclick='updateForm()' id='" + taskId + "'" + ">\
-                        </i><i class='delete btn fa fa-close px-2 py-1' onclick='deleteTask()' id='delete" + taskId + "'" + "></i></span><small><br>" + createdDate + "</small></div>"
+                        <input type='submit' class='btn gradient' value='Update' id='submit" + taskId + "'" + "></form></div><div draggable='true' ondragenter='dragEnter(event)' ondragleave='dragLeave(event)' ondragstart='drag(event)' id='card" + taskId + "'" + " class='card gradient collapse task-card py-2 pl-3'><div class='card-drag' id='drag" + taskId + "'" + "></div><span><h5 class='d-inline py-2'> " + title +
+                        "</h5><i class='edit btn btn-sm  fa fa-pencil text-success' onclick='updateForm()' id='" + taskId + "'" + ">\
+                        </i><i class='delete btn btn-sm fa' onclick='deleteTask()' id='delete" + taskId + "'" + "></i></span><small>" + createdDate + "</small></div>"
     if (cat.category == 1) {
         
         if (updated) {
@@ -72,6 +72,7 @@ function loopTasks(cat, updated, dropped){
 
             $("#waitingTasks").before(tasksDisplay);
         }
+        $("#delete" + taskId).addClass("fa-close")
         taskSummary()
 
     } else if (cat.category == 2) {
@@ -85,6 +86,8 @@ function loopTasks(cat, updated, dropped){
             inprogress += 1
             $("#inprogressTasks").append(tasksDisplay);
         }
+        document.getElementById("card" + taskId).style.opacity = ".95";
+        $("#delete" + taskId).addClass("fa-close")
         taskSummary()
     }
     else  {
@@ -97,9 +100,8 @@ function loopTasks(cat, updated, dropped){
             completed += 1
             $("#completedTasks").before(tasksDisplay);
         }
-        var thisId = $("#delete" + taskId)
-        $(thisId).removeClass("fa-close")
-        $(thisId).addClass("fa-trash")
+        $("#delete" + taskId).addClass("fa-trash")
+        document.getElementById("card" + taskId).style.opacity = ".85";
         taskSummary()
     }
 }
@@ -116,6 +118,26 @@ function drag(ev) {
     var thisId = element.substring("4")
 
     whatCat = $("#cat" + thisId).val()
+}
+
+// Dropped target
+var targetId;
+function dragEnter(ev) {
+    targetId = ev.target.id.substring("4")
+    if (ev.target.className == "card-drag") {
+       $(ev.target).css("border", "3px solid red")
+    } 
+}
+
+// Leaving the targetted 
+function dragLeave(ev) {
+    if (ev.target.className == "card-drag") {
+        $(ev.target).css("border", "")
+    } 
+}
+
+function dragEnd(ev) {
+    // body...
 }
 
 // On drop update the DB and delete the later
@@ -200,7 +222,7 @@ function fetchTasks(){
 
 // Creating New Tasks
 function newTask() {
-    $("#createForm").toggle(250)
+    $("#createForm").toggle(250);
     $("#noNew").toggle(250)
 }
 
@@ -221,10 +243,9 @@ function createForm(){
                 method  : "POST",
                 data    : formData,
                 success : function(data){
-                    $("#createForm").toggle(250)
+                    $("#createForm").toggle(250);
+                    document.getElementById("createForm").reset()
                     loopTasks(data)
-                    $("#formToggler").addClass("collapsed");
-                    document.getElementById("createForm").reset();               
                     requestSent = false;
                 },
                 errors  : function(data){
