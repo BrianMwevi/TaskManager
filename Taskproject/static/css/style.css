@@ -1,5 +1,5 @@
 .home-bg {
-    background-image: linear-gradient(to right bottom, rgba(126, 213, 111, 0.8), rgba(40, 180, 133, 0.8)), url(../img/home.jpg);
+    background-image: linear-gradient(to right bottom, rgba(0,0,0, .3), rgba(0,0,0, .3)), url(../img/home2.jpg);
 	background-attachment: fixed;
 	background-position: center center;
 	background-size: cover;
@@ -7,10 +7,11 @@
 	/*height: auto;*/
 	position: relative;
 	min-height: 100vh;
+	padding-top: 6rem;
 }
 
 .gradient {
-	background:linear-gradient(to left,rgba(126, 213, 111, 0.8),rgba(40, 180, 133, 0.8));
+	background:linear-gradient(to left,rgba(126, 213, 111, .6),rgba(40, 180, 133, .6));
 }
 
 
@@ -87,4 +88,12 @@
 
 .new:hover {
 	transform: scale(1.2);
+}
+
+.head-fa {
+	background-image: -webkit-linear-gradient(180deg, rgba(126, 213, 111, 0.9) 0%,rgba(40, 180, 133, 0.9) 100%);
+    background-image: -moz-linear-gradient(180deg, rgba(126, 213, 111, 0.9) 0%,rgba(40, 180, 133, 0.9) 100%);
+    background-image: -ms-linear-gradient(180deg, rgba(126, 213, 111, 0.9) 0%,rgba(40, 180, 133, 0.9) 100%);
+    -webkit-background-clip: text;
+    color: transparent;
 }
