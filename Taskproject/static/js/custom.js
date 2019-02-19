@@ -61,7 +61,7 @@ function loopTasks(cat, updated, dropped){
                         <input type='submit' class='btn gradient' value='Update' id='submit" + taskId + "'" + "></form></div><div draggable='true' ondragenter='dragEnter(event)' ondragleave='dragLeave(event)' ondragstart='drag(event)'\
                         id='card" + taskId + "'" + " class='card gradient collapse task-card py-2 pl-3'><div class='card-drag' id='drag" + taskId + "'" + "></div><span><h5 class='d-inline py-2' id='header" + taskId + "'" + "> " + title +
                         "</h5><i class='edit btn btn-sm  fa fa-pencil text-success' onclick='updateForm()' id='" + taskId + "'" + ">\
-                        </i><i class='delete btn btn-sm fa' onclick='deleteTask()' id='delete" + taskId + "'" + "></i></span><small>" + if (taskCat == 3) {endDate}else{createdDate} + "</small></div>"
+                        </i><i class='delete btn btn-sm fa' onclick='deleteTask()' id='delete" + taskId + "'" + "></i></span><small id='date" + taskId + "'>" + createdDate + "</small></div>"
     if (cat.category == 1) {
         
         if (updated) {
@@ -105,6 +105,7 @@ function loopTasks(cat, updated, dropped){
         $("#delete" + taskId).addClass("fa-trash")
         document.getElementById("card" + taskId).style.opacity = ".85";
         $("#header" + taskId).replaceWith("<h5 class='d-inline'><strike>" + title + "</strike></h5>")
+        $("#date" + taskId).replaceWith("<small id='date" + taskId + "'><span class='fa fa-check-square pr-1'></span>" + endDate + "</small>")
         taskSummary()
     }
 }

@@ -38,7 +38,7 @@ class TaskModelSerializer(serializers.ModelSerializer):
 		if obj.end_date == None:
 			return "Not completed"
 		else:
-			return timesince(obj.end_date)
+			return timesince(obj.end_date) + " ago"
 
 	# def get_task_count(self, obj):
 	# 	return self.task_count
