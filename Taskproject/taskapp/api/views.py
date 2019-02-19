@@ -44,8 +44,18 @@ class TaskUpdate(RetrieveUpdateAPIView):
 		return tasks
 
 	def perform_update(self, serializer):
-		print(self.request.user)
 		serializer.save(started_date=timezone.now())
+
+		def get_date(*args, **kwargs):
+			if self.request.method == 'PUT':
+				category = self.request.POST.get("category")
+				if category == "3":
+					serializer.save(end_date=timezone.now())
+				else:
+					serializer.save(end_date=None)
+			else:
+				pass
+		get_date()
 
 	
 class TaskDelete(DestroyAPIView):

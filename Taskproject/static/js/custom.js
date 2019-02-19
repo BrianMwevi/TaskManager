@@ -52,14 +52,16 @@ function loopTasks(cat, updated, dropped){
     var detail = cat.content;
     var taskCat = cat.category;
     var createdDate = cat.created_date;
+    var endDate = cat.end_date;
     var tasksDisplay = "<form method='POST' class='gradient collapse' id='form" + taskId + "'" + "><input type='hidden' name='category' value='" + taskCat + "' id='cat" + taskId +"'" +
                         "><input type='hidden'  name='csrfmiddlewaretoken' value='" + formTokenValue + "'" + " id='token" + taskId + "'" + "><div></div><div class='form-group'>\
                         <span closeUpdate'><i class='btn fa fa-close float-right btn-dark rounded p-2' id='close" + taskId + "'" + " ></i></span><input type='text'\
                         class='form-control form_create border-0' required value='" + title+ "'" + " name='title' autofocus='' id='title" + taskId + "'" + "></div>\
                         <div class='form-group'><textarea name='content' class='form_create form-control border-0' required='' autofocus='' id='detail" + taskId + "'" + ">" + detail + "</textarea></div>\
-                        <input type='submit' class='btn gradient' value='Update' id='submit" + taskId + "'" + "></form></div><div draggable='true' ondragenter='dragEnter(event)' ondragleave='dragLeave(event)' ondragstart='drag(event)' id='card" + taskId + "'" + " class='card gradient collapse task-card py-2 pl-3'><div class='card-drag' id='drag" + taskId + "'" + "></div><span><h5 class='d-inline py-2'> " + title +
+                        <input type='submit' class='btn gradient' value='Update' id='submit" + taskId + "'" + "></form></div><div draggable='true' ondragenter='dragEnter(event)' ondragleave='dragLeave(event)' ondragstart='drag(event)'\
+                        id='card" + taskId + "'" + " class='card gradient collapse task-card py-2 pl-3'><div class='card-drag' id='drag" + taskId + "'" + "></div><span><h5 class='d-inline py-2' id='header" + taskId + "'" + "> " + title +
                         "</h5><i class='edit btn btn-sm  fa fa-pencil text-success' onclick='updateForm()' id='" + taskId + "'" + ">\
-                        </i><i class='delete btn btn-sm fa' onclick='deleteTask()' id='delete" + taskId + "'" + "></i></span><small>" + createdDate + "</small></div>"
+                        </i><i class='delete btn btn-sm fa' onclick='deleteTask()' id='delete" + taskId + "'" + "></i></span><small>" + if (taskCat == 3) {endDate}else{createdDate} + "</small></div>"
     if (cat.category == 1) {
         
         if (updated) {
@@ -102,6 +104,7 @@ function loopTasks(cat, updated, dropped){
         }
         $("#delete" + taskId).addClass("fa-trash")
         document.getElementById("card" + taskId).style.opacity = ".85";
+        $("#header" + taskId).replaceWith("<h5 class='d-inline'><strike>" + title + "</strike></h5>")
         taskSummary()
     }
 }
