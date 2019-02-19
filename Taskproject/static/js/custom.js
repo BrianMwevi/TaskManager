@@ -7,8 +7,24 @@ var completed = 0;
 // Fetching all the tasks when the document is ready
 $(document).ready(function(){
     fetchTasks();
+    myTime()
 })
 
+
+function myTime() {
+    var dt = new Date();
+
+    var hours = dt.getHours();
+    var mins = dt.getMinutes();
+    var secs = dt.getSeconds();
+
+    // mins = Ticking(mins);
+    // secs = Ticking(secs);
+
+    var time = hours + ":" + mins + ":" + secs
+    $("#liveTime").html(time)
+    setTimeout(myTime, 1000)
+}
 
 // Task summary
 function taskSummary() {
