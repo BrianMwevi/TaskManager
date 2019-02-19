@@ -106,6 +106,7 @@ function loopTasks(cat, updated, dropped){
         }
         document.getElementById("card" + taskId).style.opacity = ".95";
         $("#delete" + taskId).addClass("fa-close")
+        $("#date" + taskId).replaceWith("<small id='date" + taskId + "'><span class='fa fa-square pr-1'></span>" + createdDate + "</small>")
         taskSummary()
     }
     else  {
