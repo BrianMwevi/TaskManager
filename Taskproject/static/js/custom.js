@@ -7,7 +7,7 @@ var completed = 0;
 // Fetching all the tasks when the document is ready
 $(document).ready(function(){
     fetchTasks();
-    myTime()
+    // myTime()
 })
 
 
@@ -36,11 +36,21 @@ function taskSummary() {
     
 }
 // If no task(s)
-function emptyTask() {
+function emptyMax() {
     if (waiting == 0) {
         $("#waitingTasks").html("<h4 id='noNew' class='gradient text-center py-5'>No new Tasks!</h4>")
-    } else {
+    }
+
+    else {
         $("#waitingTasks #noNew").remove()
+        if (waiting >= 7) {
+            $("#addTask").removeAttr("onclick")
+            $("#addTask").removeClass("new")
+        }
+        else {
+            $("#addTask").addClass("new")
+            $("#addTask").attr("onclick", "newTask()")
+        }
     }
     if (inprogress == 0) {
         $("#inprogressTasks").html("<h4 id='noProgress' class='gradient text-center py-5'>No tasks inprogress!</h4>")
@@ -76,7 +86,7 @@ function loopTasks(cat, updated, dropped){
                         <div class='form-group'><textarea name='content' class='form_create form-control border-0' required='' autofocus='' id='detail" + taskId + "'" + ">" + detail + "</textarea></div>\
                         <input type='submit' class='btn gradient' value='Update' id='submit" + taskId + "'" + "></form></div><div draggable='true' ondragenter='dragEnter(event)' ondragleave='dragLeave(event)' ondragstart='drag(event)'\
                         id='card" + taskId + "'" + " class='card gradient collapse task-card py-2 pl-3'><div class='card-drag' id='drag" + taskId + "'" + "></div><span><h5 class='d-inline py-2' id='header" + taskId + "'" + "> " + title +
-                        "</h5><i class='edit btn btn-sm  fa fa-pencil text-white' onclick='updateForm()' id='" + taskId + "'" + ">\
+                        "</h5><i class='edit btn btn-sm  fa fa-pencil ' onclick='updateForm()' id='" + taskId + "'" + ">\
                         </i><i class='delete btn btn-sm fa' onclick='deleteTask()' id='delete" + taskId + "'" + "></i></span><small id='date" + taskId + "'>" + createdDate + "</small></div>"
     if (cat.category == 1) {
         
@@ -228,7 +238,7 @@ function fetchTasks(){
         success : function(data){
             parseTasks(data)
             taskSummary()
-            emptyTask()
+            emptyMax()
             var filter = ($("#waitingTasks").find())
             // console.log(filter)
 
@@ -331,7 +341,7 @@ function updateTask(formData, sendUrl, taskId, dropped){
                 loopTasks(data, true, false)
                 $("#card" + taskId).show(100)
             }
-            emptyTask()
+            emptyMax()
                 
         },
         errors : function(data){
