@@ -46,11 +46,17 @@ function myTime() {
 // Task summary
 function taskSummary() {
     var totalTasks = waiting + inprogress + completed;
+    var sucessRate = (completed/totalTasks) * 100 + ((inprogress/totalTasks) * 100)/2;
+    sucessRate = Math.round((sucessRate + 0.00001) * 100) / 100
+    var workedHours = sucessRate * 0.08
+    workedHours = Math.round((workedHours + 0.00001) * 100) / 100
 
     $("#numWaiting").text(waiting);
     $("#numProgress").text(inprogress);
     $("#numCompleted").text(completed);
     $("#numTasks").text(totalTasks);
+    $("#numSuccess").text(sucessRate + "%");
+    $("#numHours").text(workedHours);
 
     if (totalTasks === 0) {
         $("#notifications").removeClass("fa-bell");
