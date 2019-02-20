@@ -36,35 +36,9 @@
 	background-color: transparent;
 }
 
-/*Card dragstart*/
-.card-drag::before {
-	content: "";
-	position:absolute;
-	top:0;
-	left:0;
-	height: 100%;
-	width: 100%;
-	/*background: yellow;*/
-	z-index: 0;
-}
-
 /*Card hoover*/
 .task-card:hover {
 	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
-
-.edit {
-	position: absolute;
-	/*top: 0;*/
-	right: 2rem;
-	z-index: 1;
-}
-
-.delete {
-	position: absolute;
-	/*top: 0;*/
-	right: 0;
-	z-index: 1;
 }
 
 .edit:hover {
@@ -88,7 +62,7 @@
   }
 
   to {
-    transform: scale(1.5);
+    transform: scale(1.3);
   }
 }
 
@@ -113,4 +87,8 @@
     background-image: -ms-linear-gradient(180deg, rgba(126, 213, 111, 0.9) 0%,rgba(40, 180, 133, 0.9) 100%);
     -webkit-background-clip: text;
     color: transparent;
+}
+
+.temp-margin {
+	margin-bottom: 3rem;
 }

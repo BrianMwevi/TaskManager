@@ -42,14 +42,14 @@
 				<ul class="navbar-nav ml-auto">
 					
 					{% if user.is_authenticated %}					
-					
-						<li class="nav-item"><a href="{% url 'taskapp:task_list' %}" class="nav-link">Tasks</a></li>
 						
-						<li class="nav-item"><a href="" class="nav-link">Groups</a></li>
+						<li class="nav-item mx-2"><i class="fa fa-plus fa-2x mt-1" onclick="newTask()"></i></li>
+												
+						<!-- <li class="nav-item mx-2"><a href="" class="nav-link"><i class="fa fa-smile-o fa-2x text-white"></i></a></li> -->
 						
-						<li class="nav-item"><a href="" class="nav-link"><i class="fa fa-smile-o fa-2x text-white"></i></a></li>
+						<li class="nav-item mx-2"><a href="{% url 'accounts:logout' %}" class="nav-link">Log out</a></li>
 						
-						<li class="nav-item"><a href="{% url 'accounts:logout' %}" class="nav-link">Log out</a></li>
+						<li class="nav-item mx-2 gradient"><strong id="liveTime" class="nav-link"></strong></li>
 										
 					{% else %}
 					
@@ -101,10 +101,13 @@
 	<script src="{% static "js/popper.min.js" %}"></script>
 	
 	<script src="{% static "js/bootstrap.min.js" %}"></script>
-	{% csrf_token %}
+
 	<script type="text/javascript">
-	// using jQuery
-	var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+
+		// using jQuery
+
+		var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+
 	</script>
 
 	<script src="{% static "js/custom.js" %}"></script>

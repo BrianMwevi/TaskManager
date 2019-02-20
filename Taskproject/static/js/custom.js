@@ -1,27 +1,44 @@
 var formTokenValue = document.getElementsByName('csrfmiddlewaretoken')[0].value;
 var requestSent = false;
+
 var waiting = 0;
 var inprogress = 0;
 var completed = 0;
 
+var hrDel = 0;
+var minDel = 0;
+var secDel = 0;
+
 // Fetching all the tasks when the document is ready
 $(document).ready(function(){
     fetchTasks();
-    // myTime()
+    myTime()
 })
 
+var time;
 
 function myTime() {
+    
+
+    // mins = Ticking(mins);
+    // secs = Ticking(secs);
     var dt = new Date();
 
     var hours = dt.getHours();
     var mins = dt.getMinutes();
     var secs = dt.getSeconds();
+    if (hours < 10) {
+        hours = "0" + hours;
+    }
+    if (mins < 10) {
+        mins = "0" + mins;
+    }
+    if (secs < 10) {
+        secs = "0" + secs
+    }
 
-    // mins = Ticking(mins);
-    // secs = Ticking(secs);
-
-    var time = hours + ":" + mins + ":" + secs
+    autoDelete(hours, mins, secs)
+    time = hours + ":" + mins + ":" + secs
     $("#liveTime").html(time)
     setTimeout(myTime, 1000)
 }
@@ -29,12 +46,24 @@ function myTime() {
 // Task summary
 function taskSummary() {
     var totalTasks = waiting + inprogress + completed;
+
     $("#numWaiting").text(waiting);
     $("#numProgress").text(inprogress);
     $("#numCompleted").text(completed);
     $("#numTasks").text(totalTasks);
+
+    if (totalTasks === 0) {
+        $("#notifications").removeClass("fa-bell");
+        $("#notifications").addClass("fa-bell-slash");
+        console.log("Zero")
+    } else {
+        $("#notifications").removeClass("fa-bell-slash");
+        $("#notifications").addClass("fa-bell");
+        console.log("Not zero")
+    }
     
 }
+
 // If no task(s)
 function emptyMax() {
     if (waiting == 0) {
@@ -75,7 +104,7 @@ function loopTasks(cat, updated, dropped){
 
     var taskId = cat.id;
     var title = cat.title;
-    var detail = cat.content;
+    var content = cat.content;
     var taskCat = cat.category;
     var createdDate = cat.created_date;
     var endDate = cat.end_date;
@@ -83,11 +112,11 @@ function loopTasks(cat, updated, dropped){
                         "><input type='hidden'  name='csrfmiddlewaretoken' value='" + formTokenValue + "'" + " id='token" + taskId + "'" + "><div></div><div class='form-group'>\
                         <span closeUpdate'><i class='btn fa fa-close float-right btn-dark rounded p-2' id='close" + taskId + "'" + " ></i></span><input type='text'\
                         class='form-control form_create border-0' required value='" + title+ "'" + " name='title' autofocus='' id='title" + taskId + "'" + "></div>\
-                        <div class='form-group'><textarea name='content' class='form_create form-control border-0' required='' autofocus='' id='detail" + taskId + "'" + ">" + detail + "</textarea></div>\
-                        <input type='submit' class='btn gradient' value='Update' id='submit" + taskId + "'" + "></form></div><div draggable='true' ondragenter='dragEnter(event)' ondragleave='dragLeave(event)' ondragstart='drag(event)'\
-                        id='card" + taskId + "'" + " class='card gradient collapse task-card py-2 pl-3'><div class='card-drag' id='drag" + taskId + "'" + "></div><span><h5 class='d-inline py-2' id='header" + taskId + "'" + "> " + title +
-                        "</h5><i class='edit btn btn-sm  fa fa-pencil ' onclick='updateForm()' id='" + taskId + "'" + ">\
-                        </i><i class='delete btn btn-sm fa' onclick='deleteTask()' id='delete" + taskId + "'" + "></i></span><small id='date" + taskId + "'>" + createdDate + "</small></div>"
+                        <div class='form-group'><textarea name='content' class='form_create form-control border-0' required='' autofocus='' id='content" + taskId + "'" + ">" + content + "</textarea></div>\
+                        <input type='submit' class='btn gradient' value='Update' id='submit" + taskId + "'" + "></form></div><div draggable='true' ondragstart='drag(event)'\
+                        id='card" + taskId + "'" + " class='card gradient collapse task-card py-2 pl-3'><span><h5 class='d-inline py-2' id='header" + taskId + "'" + "> " + title +
+                        "</h5><span class='float-right'><i class='edit btn btn-sm  fa fa-pencil' onclick='updateForm()' id='" + taskId + "'" + ">\
+                        </i><i class='delete btn btn-sm fa' onclick='deleteTask()' id='delete" + taskId + "'" + "></i></span></span><small id='date" + taskId + "'>" + createdDate + "</small></div>"
     if (cat.category == 1) {
         
         if (updated) {
@@ -125,12 +154,12 @@ function loopTasks(cat, updated, dropped){
         } else if(dropped) {
             completed += 1
             $("#completedTasks").before(tasksDisplay);
+            
         } else {
             completed += 1
             $("#completedTasks").before(tasksDisplay);
         }
         $("#delete" + taskId).addClass("fa-trash")
-        // document.getElementById("card" + taskId).style.opacity = ".85";
         $("#header" + taskId).replaceWith("<h5 class='d-inline'><strike>" + title + "</strike></h5>")
         $("#date" + taskId).replaceWith("<small id='date" + taskId + "'><span class='fa fa-check-square pr-1'></span>" + endDate + "</small>")
         taskSummary()
@@ -152,24 +181,7 @@ function drag(ev) {
 }
 
 // Dropped target
-var targetId;
-function dragEnter(ev) {
-    targetId = ev.target.id.substring("4")
-    if (ev.target.className == "card-drag") {
-       $(ev.target).css("border", "3px solid red")
-    } 
-}
 
-// Leaving the targetted 
-function dragLeave(ev) {
-    if (ev.target.className == "card-drag") {
-        $(ev.target).css("border", "")
-    } 
-}
-
-function dragEnd(ev) {
-    // body...
-}
 
 // On drop update the DB and delete the later
 function drop(ev, el) {
@@ -277,6 +289,7 @@ function createForm(){
                     $("#createForm").toggle(250);
                     document.getElementById("createForm").reset()
                     loopTasks(data)
+                    emptyMax()
                     requestSent = false;
                 },
                 errors  : function(data){
@@ -362,29 +375,29 @@ function deleteTask() {
 function dbDelete(taskId, url) {
     $.ajax({
         url     : url,
-        method  : "DELETE",
+        type  : "DELETE",
         data    : "data",
         beforeSend: function(xhr, settings) {
             if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
                 xhr.setRequestHeader("X-CSRFToken", csrftoken);
             }
         },
-        success : function (data){
+        success : function (){
             console.log("Deleted!")
-        }
+            console.log(waiting, inprogress, completed)
+        },
+        errors : function(){
+            console.log("No data")
+        },
     })
 }
 
+function autoDelete(hours, mins, secs) {
+    if (secs == 0) {
 
-
-
-
-
-
-
-
-
-
-
-
-
+    }
+    if (hours == hrDel &&  mins == minDel && secs == secDel) {
+        console.log("Delete == true")
+    }
+    // console.log(hrDel, minDel, secDel)
+}

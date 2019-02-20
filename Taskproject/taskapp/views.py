@@ -8,7 +8,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Task
 # Create your views here.
 
-class TaskListView(ListView):
+class TaskListView(LoginRequiredMixin, ListView):
+	success_url = "/"
 	model = Task
 	def get_context_data(self, **kwargs):
 	    context = super(TaskListView, self).get_context_data(**kwargs)

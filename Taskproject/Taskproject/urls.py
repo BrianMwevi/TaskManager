@@ -1,10 +1,11 @@
 from django.contrib import admin
 from django.urls import path, include
 from . import views
+from taskapp.views import TaskListView
 
 
 urlpatterns = [
-	path('', views.home, name='home'),
+	path('', TaskListView.as_view(), name='home'),
     path('accounts/', include('accounts.urls', namespace='accounts')),
     path('accounts/', include('django.contrib.auth.urls')),
  #    path('me/', include('user_profile.urls', namespace='user_profile')),

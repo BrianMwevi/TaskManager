@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 
 
-from rest_framework.generics import ListAPIView, ListCreateAPIView,RetrieveUpdateAPIView, DestroyAPIView
+from rest_framework.generics import ListAPIView, ListCreateAPIView,RetrieveUpdateAPIView, RetrieveDestroyAPIView
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.response import Response
 from rest_framework import permissions, authentication
@@ -40,7 +40,7 @@ class TaskUpdate(RetrieveUpdateAPIView):
 	lookup_field = "pk"	
 	
 	def get_queryset(self, *args, **kwargs):
-		tasks =  Task.objects.all()
+		tasks =  Task.objects.filter(user=self.request.user)
 		return tasks
 
 	def perform_update(self, serializer):
@@ -58,11 +58,11 @@ class TaskUpdate(RetrieveUpdateAPIView):
 		get_date()
 
 	
-class TaskDelete(DestroyAPIView):
+class TaskDelete(RetrieveDestroyAPIView):
 	serializer_class = TaskModelSerializer
 	permission_classes = [permissions.IsAuthenticated]
 
 	def get_queryset(self, *args, **kwargs):
-		tasks = Task.objects.all()
-
-		return  tasks
+		tasks = Task.objects.filter(user=self.request.user)
+		print(tasks.count())
+		return tasks
