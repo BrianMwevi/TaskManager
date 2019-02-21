@@ -205,6 +205,8 @@ function drop(ev, el) {
     var thisId = data.substring("4");
     var sendUrl = "/api/tasks/update/" + thisId + "/"    
     var targeted = (ev.currentTarget.id);
+    ev.target.appendChild(document.getElementById(data));
+
 
     function checkCat() {
         var cat = $("#cat" +  thisId).val();
