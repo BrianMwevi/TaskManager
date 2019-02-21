@@ -406,15 +406,12 @@ function dbDelete(taskId, url) {
             var cat = $("#cat" + taskId).val();
             if (cat == 1) {
                 waiting -= 1
-                console.log("waiting " + waiting)
             }
             if (cat == 2) {
                 inprogress -= 1
-                console.log("inprogress " + inprogress)
             }
             if (cat == 3) {
                 completed -= 1
-                console.log("completed " + completed)
             }
             taskSummary()
         },

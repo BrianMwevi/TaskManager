@@ -148,3 +148,8 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+import django_heroku 
+# Then all the way at the bottom of the file
+# ... 
+django_heroku.settings(locals())
