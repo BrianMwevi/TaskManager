@@ -46,28 +46,36 @@ function myTime() {
 // Task summary
 function taskSummary() {
     var totalTasks = waiting + inprogress + completed;
-    var sucessRate = (completed/totalTasks) * 100 + ((inprogress/totalTasks) * 100)/2;
-    sucessRate = Math.round((sucessRate + 0.00001) * 100) / 100
     var workedHours = sucessRate * 0.08
     workedHours = Math.round((workedHours + 0.00001) * 100) / 100
+    var sucessRate = (completed/totalTasks) * 100 + ((inprogress/totalTasks) * 100)/2;
+    sucessRate = Math.round((sucessRate + 0.00001) * 100) / 100
+    
 
     $("#numWaiting").text(waiting);
     $("#numProgress").text(inprogress);
     $("#numCompleted").text(completed);
     $("#numTasks").text(totalTasks);
-    $("#numSuccess").text(sucessRate + "%");
     $("#numHours").text(workedHours);
+    $("#numSuccess").text(sucessRate + "%");
+    
+    if (isNaN(workedHours)) {
+        $("#numHours").text("0")
+    }
+    if (isNaN(sucessRate)) {
+        $("#numSuccess").text("0%");
+    }
+    
 
     if (totalTasks === 0) {
         $("#notifications").removeClass("fa-bell");
         $("#notifications").addClass("fa-bell-slash");
-        console.log("Zero")
     } else {
         $("#notifications").removeClass("fa-bell-slash");
         $("#notifications").addClass("fa-bell");
-        console.log("Not zero")
     }
     
+    emptyMax()
 }
 
 // If no task(s)
@@ -79,12 +87,12 @@ function emptyMax() {
     else {
         $("#waitingTasks #noNew").remove()
         if (waiting >= 7) {
-            $("#addTask").removeAttr("onclick")
+            $("#addTask, #navTask").removeAttr("onclick")
             $("#addTask").removeClass("new")
         }
         else {
             $("#addTask").addClass("new")
-            $("#addTask").attr("onclick", "newTask()")
+            $("#addTask, #navTask").attr("onclick", "newTask()")
         }
     }
     if (inprogress == 0) {
@@ -256,7 +264,7 @@ function fetchTasks(){
         success : function(data){
             parseTasks(data)
             taskSummary()
-            emptyMax()
+            
             var filter = ($("#waitingTasks").find())
             // console.log(filter)
 
@@ -295,7 +303,7 @@ function createForm(){
                     $("#createForm").toggle(250);
                     document.getElementById("createForm").reset()
                     loopTasks(data)
-                    emptyMax()
+                    
                     requestSent = false;
                 },
                 errors  : function(data){
@@ -342,13 +350,16 @@ function csrfSafeMethod(method) {
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
 
+// Before sending the data
+ 
+
 function updateTask(formData, sendUrl, taskId, dropped){
 
     $.ajax({
         url : sendUrl,
         method : "PUT",
         data : formData,
-        beforeSend: function(xhr, settings) {
+        beforeSend: function (xhr, settings) {
             if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
                 xhr.setRequestHeader("X-CSRFToken", csrftoken);
             }
@@ -360,7 +371,7 @@ function updateTask(formData, sendUrl, taskId, dropped){
                 loopTasks(data, true, false)
                 $("#card" + taskId).show(100)
             }
-            emptyMax()
+            
                 
         },
         errors : function(data){
@@ -373,8 +384,10 @@ function deleteTask() {
     var rawId = event.target.id;
     var thisId = rawId.substring("6")
     $("#card" + thisId).slideUp(100);
-    url = "/api/tasks/delete/" + thisId + "/"
+    var url = "/api/tasks/delete/" + thisId + "/"
     dbDelete(thisId, url)
+    taskSummary()
+    console.log("Delete initiated!")
 }
 
 // Delete the hidden element in the DB
@@ -382,18 +395,31 @@ function dbDelete(taskId, url) {
     $.ajax({
         url     : url,
         type  : "DELETE",
-        data    : "data",
-        beforeSend: function(xhr, settings) {
+        data    : taskId,
+        beforeSend: function (xhr, settings) {
             if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
                 xhr.setRequestHeader("X-CSRFToken", csrftoken);
             }
         },
-        success : function (){
-            console.log("Deleted!")
+        success : function (data){
             console.log(waiting, inprogress, completed)
+            var cat = $("#cat" + taskId).val();
+            if (cat == 1) {
+                waiting -= 1
+                console.log("waiting " + waiting)
+            }
+            if (cat == 2) {
+                inprogress -= 1
+                console.log("inprogress " + inprogress)
+            }
+            if (cat == 3) {
+                completed -= 1
+                console.log("completed " + completed)
+            }
+            taskSummary()
         },
-        errors : function(){
-            console.log("No data")
+        errors : function(data){
+            console.log("Errors on delete")
         },
     })
 }

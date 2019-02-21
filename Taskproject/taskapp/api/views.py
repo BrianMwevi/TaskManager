@@ -15,6 +15,8 @@ from taskapp.models import Task
 
 class TaskNewList(ListAPIView):
 	serializer_class = TaskModelSerializer
+	permission_classes = [permissions.IsAuthenticated]
+	authentication_classes = [authentication.SessionAuthentication]
 
 	def get_queryset(self, *args, **kwargs):
 		user_tasks = Task.objects.filter(user__exact=self.request.user)
@@ -24,6 +26,7 @@ class TaskNewList(ListAPIView):
 class TaskCreate(ListCreateAPIView):
 	serializer_class = TaskModelSerializer
 	permission_classes = [permissions.IsAuthenticated, permissions.AllowAny]
+	authentication_classes = [authentication.SessionAuthentication]
 
 	def get_queryset(self, *args, **kwargs):
 		user_tasks = Task.objects.filter(user__exact=self.request.user)
@@ -46,23 +49,25 @@ class TaskUpdate(RetrieveUpdateAPIView):
 	def perform_update(self, serializer):
 		serializer.save(started_date=timezone.now())
 
-		def get_date(*args, **kwargs):
-			if self.request.method == 'PUT':
-				category = self.request.POST.get("category")
-				if category == "3":
-					serializer.save(end_date=timezone.now())
-				else:
-					serializer.save(end_date=None)
+		if self.request.method == 'PUT':
+			category = self.request.POST.get("category")
+			if category == "3":
+				serializer.save(end_date=timezone.now())
 			else:
-				pass
-		get_date()
+				serializer.save(end_date=None)
+		else:
+			pass
 
 	
 class TaskDelete(RetrieveDestroyAPIView):
 	serializer_class = TaskModelSerializer
 	permission_classes = [permissions.IsAuthenticated]
+	lookup_field = "pk"	
+
 
 	def get_queryset(self, *args, **kwargs):
+		# tasks = Task.objects.get(pk=self.request.method.delete())
 		tasks = Task.objects.filter(user=self.request.user)
+		print(self.request.method[0])
 		print(tasks.count())
 		return tasks
