@@ -18,7 +18,6 @@ class Task(models.Model):
 	started_date = models.DateTimeField(blank=True, null=True)
 	end_date 	 = models.DateTimeField(blank=True, null=True)
 
-
 	def __str__(self):
 		return self.title
 

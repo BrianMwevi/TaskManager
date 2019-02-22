@@ -122,15 +122,15 @@ function loopTasks(cat, updated, dropped){
     var taskCat = cat.category;
     var createdDate = cat.created_date;
     var endDate = cat.end_date;
-    var tasksDisplay = "<form method='POST' class='gradient collapse' id='form" + taskId + "'" + "><input type='hidden' name='category' value='" + taskCat + "' id='cat" + taskId +"'" +
+    var tasksDisplay = "<form method='POST' class='gradient collapse mb-1 rounded' id='form" + taskId + "'" + "><input type='hidden' name='category' value='" + taskCat + "' id='cat" + taskId +"'" +
                         "><input type='hidden'  name='csrfmiddlewaretoken' value='" + formTokenValue + "'" + " id='token" + taskId + "'" + "><div></div><div class='form-group'>\
-                        <span closeUpdate'><i class='btn fa fa-close float-right btn-dark rounded p-2' id='close" + taskId + "'" + " ></i></span><input type='text'\
-                        class='form-control form_create border-0' required value='" + title+ "'" + " name='title' autofocus='' id='title" + taskId + "'" + "></div>\
-                        <div class='form-group'><textarea name='content' class='form_create form-control border-0' required='' autofocus='' id='content" + taskId + "'" + ">" + content + "</textarea></div>\
-                        <input type='submit' class='btn gradient' value='Update' id='submit" + taskId + "'" + "></form></div><div draggable='true' ondragstart='drag(event)'\
-                        id='card" + taskId + "'" + " class='card gradient collapse task-card py-2 pl-3'><span><h5 class='d-inline py-2' id='header" + taskId + "'" + "> " + title +
+                        <span closeUpdate'><i class='fa fa-close float-right btn-dark p-2' id='close" + taskId + "'" + " ></i></span><input type='text'\
+                        class='form-control form_create bg-transparent border-0' required value='" + title+ "'" + " name='title' autofocus='' id='title" + taskId + "'" + "></div>\
+                        <div class='form-group'><textarea name='content' class='form_create bg-transparent form-control border-0' required='' autofocus='' id='content" + taskId + "'" + ">" + content + "</textarea></div>\
+                        <button type='submit' class='btn btn-custom' id='submit" + taskId + "'" + ">Update</button></form></div><div draggable='true' ondragstart='drag(event)'\
+                        id='card" + taskId + "'" + " class='card gradient collapse task-card py-2 pl-3'><span><h5 class='d-inline py-4' id='header" + taskId + "'" + "> " + title +
                         "</h5><span class='float-right'><i class='edit btn btn-sm  fa fa-pencil' onclick='updateForm(event)' id='" + taskId + "'" + ">\
-                        </i><i class='delete btn btn-sm fa' onclick='deleteTask(event)' id='delete" + taskId + "'" + "></i></span></span><small id='date" + taskId + "'>" + createdDate + "</small></div>"
+                        </i><i class='delete btn btn-sm fa' onclick='deleteTask(event)' id='delete" + taskId + "'" + "></i></span></span><small id='date" + taskId + "' class='py-1'>" + createdDate + "</small></div>"
     if (cat.category == 1) {
         
         if (updated) {
@@ -159,7 +159,7 @@ function loopTasks(cat, updated, dropped){
         }
         // document.getElementById("card" + taskId).style.opacity = ".95";
         $("#delete" + taskId).addClass("fa-close")
-        $("#date" + taskId).replaceWith("<small id='date" + taskId + "'><span class='fa fa-square pr-1'></span>" + createdDate + "</small>")
+        $("#date" + taskId).replaceWith("<small id='date" + taskId + "' class='py-1'><span class='fa fa-square pr-1'></span>" + createdDate + "</small>")
         taskSummary()
     }
     else  {
@@ -175,7 +175,7 @@ function loopTasks(cat, updated, dropped){
         }
         $("#delete" + taskId).addClass("fa-trash")
         $("#header" + taskId).replaceWith("<h5 class='d-inline'><strike>" + title + "</strike></h5>")
-        $("#date" + taskId).replaceWith("<small id='date" + taskId + "'><span class='fa fa-check-square pr-1'></span>" + endDate + "</small>")
+        $("#date" + taskId).replaceWith("<small id='date" + taskId + "' class='py-1'><span class='fa fa-check-square pr-1'></span>" + endDate + "</small>")
         taskSummary()
     }
 }
@@ -286,26 +286,26 @@ function newTask() {
 }
 
 
-function createForm(){
-    var form = $("#createForm");
-
-    form.submit(function(){ 
+function createForm(event){
+    event.preventDefault();
         if (!requestSent) {
             requestSent = true;
-
-            event.preventDefault();
-            var thisData = $(this);
+            var thisData = $("#createForm");
             var formData = thisData.serialize();
 
             $.ajax({
                 url     : "/api/tasks/create/",
                 method  : "POST",
                 data    : formData,
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                },
                 success : function(data){
                     $("#createForm").toggle(250);
                     document.getElementById("createForm").reset()
                     loopTasks(data)
-                    
                     requestSent = false;
                 },
                 errors  : function(data){
@@ -313,7 +313,6 @@ function createForm(){
                 },
             })
         }
-    });
 };
 
 // Updating existing tasks

@@ -52,7 +52,7 @@
 
 						<!-- Create task form -->
 
-						<form class="collapse gradient" id="createForm" method="POST">{% csrf_token %}
+						<form class="collapse gradient" id="createForm" method="POST" data-ajax = "false">{% csrf_token %}
 							
 							<div class="form-group">
 
@@ -64,7 +64,7 @@
 								<textarea name="content" class="form-control bg-transparent form_create border-0" required placeholder="Detail" autofocus=""></textarea>
 
 							</div>
-							<button class="btn gradient" onclick="createForm()" type='submit'>Create</button>
+							<button class="btn btn-custom" onclick="createForm(event)" type='submit'>Create</button>
 
 						</form>
 

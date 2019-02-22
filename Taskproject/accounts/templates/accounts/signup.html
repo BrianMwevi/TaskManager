@@ -2,17 +2,17 @@
 
 {% load bootstrap4 %}
 
-
-
 {% block body_block %}
 
 <section class="home-bg">
 	
 	<div class="container">
-		
+
 		<div class="row">
 			
-			<div class="offset-4 gradient p-5 mx-auto">
+			<div class="col-md-5 mx-auto rounded gradient p-5">
+		
+				<h4 class="text-center">Sign Up</h4>
 				
 				<form class="user-form" method="POST">
 					
@@ -22,7 +22,7 @@
 				  
 				  <div class="text-center">
 				  	
-				    <input class="btn btn-info" type="submit" name="user_submit" value="SIGN UP">
+				    <button class="btn btn-custom" type="submit">SIGN UP</button>
 				    
 				    <p>Already have an account? <a href="{% url 'accounts:login' %}" class="card-link text-primary">Log in</a></p>
 				    
