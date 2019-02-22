@@ -129,8 +129,8 @@ function loopTasks(cat, updated, dropped){
                         <div class='form-group'><textarea name='content' class='form_create form-control border-0' required='' autofocus='' id='content" + taskId + "'" + ">" + content + "</textarea></div>\
                         <input type='submit' class='btn gradient' value='Update' id='submit" + taskId + "'" + "></form></div><div draggable='true' ondragstart='drag(event)'\
                         id='card" + taskId + "'" + " class='card gradient collapse task-card py-2 pl-3'><span><h5 class='d-inline py-2' id='header" + taskId + "'" + "> " + title +
-                        "</h5><span class='float-right'><i class='edit btn btn-sm  fa fa-pencil' onclick='updateForm()' id='" + taskId + "'" + ">\
-                        </i><i class='delete btn btn-sm fa' onclick='deleteTask()' id='delete" + taskId + "'" + "></i></span></span><small id='date" + taskId + "'>" + createdDate + "</small></div>"
+                        "</h5><span class='float-right'><i class='edit btn btn-sm  fa fa-pencil' onclick='updateForm(event)' id='" + taskId + "'" + ">\
+                        </i><i class='delete btn btn-sm fa' onclick='deleteTask(event)' id='delete" + taskId + "'" + "></i></span></span><small id='date" + taskId + "'>" + createdDate + "</small></div>"
     if (cat.category == 1) {
         
         if (updated) {
@@ -205,7 +205,7 @@ function drop(ev, el) {
     var thisId = data.substring("4");
     var sendUrl = "/api/tasks/update/" + thisId + "/"    
     var targeted = (ev.currentTarget.id);
-    ev.target.appendChild(document.getElementById(data));
+    // ev.target.appendChild(document.getElementById(data));
 
 
     function checkCat() {
@@ -317,7 +317,7 @@ function createForm(){
 };
 
 // Updating existing tasks
-function updateForm(){
+function updateForm(event){
 
     var thisId = event.target.id; // getting id of the task to be edited
     var formId = $("#form" + thisId);
@@ -382,7 +382,7 @@ function updateTask(formData, sendUrl, taskId, dropped){
   })
 }
 
-function deleteTask() {
+function deleteTask(event) {
     var rawId = event.target.id;
     var thisId = rawId.substring("6")
     $("#card" + thisId).slideUp(100);
