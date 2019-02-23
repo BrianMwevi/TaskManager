@@ -129,7 +129,7 @@ function loopTasks(cat, updated, dropped){
                         <div class='form-group'><textarea name='content' class='form_create bg-transparent form-control border-0' required='' autofocus='' id='content" + taskId + "'" + ">" + content + "</textarea></div>\
                         <button type='submit' class='btn btn-custom' id='submit" + taskId + "'" + ">Update</button></form></div><div draggable='true' ondragstart='drag(event)'\
                         id='card" + taskId + "'" + " class='card gradient collapse task-card py-2 pl-3'><span><h5 class='d-inline py-4' id='header" + taskId + "'" + "> " + title +
-                        "</h5><span class='float-right'><i class='edit btn btn-sm  fa fa-pencil' onclick='updateForm(event)' id='" + taskId + "'" + ">\
+                        "</h5><span class='float-right'><i class='edit btn btn-sm fa fa-pencil' onclick='updateForm(event)' id='" + taskId + "'" + ">\
                         </i><i class='delete btn btn-sm fa' onclick='deleteTask(event)' id='delete" + taskId + "'" + "></i></span></span><small id='date" + taskId + "' class='py-1'>" + createdDate + "</small></div>"
     if (cat.category == 1) {
         
@@ -201,18 +201,19 @@ function drag(ev) {
 function drop(ev, el) {
     ev.preventDefault();
     var calUpdate = false;    
-    var data = ev.dataTransfer.getData("text");
-    var thisId = data.substring("4");
+    var thisId = ev.dataTransfer.getData("text").substring("4");
+    // var thisId = data.substring("4");
     var sendUrl = "/api/tasks/update/" + thisId + "/"    
     var targeted = (ev.currentTarget.id);
-    // ev.target.appendChild(document.getElementById(data));
-
 
     function checkCat() {
         var cat = $("#cat" +  thisId).val();
         if (cat == whatCat) {
             calUpdate = false;  
-        } else {
+        }
+        else {
+            ev.target.appendChild(document.getElementById("card" + thisId));
+
             calUpdate = true
 
             if (whatCat == 1) {
@@ -228,19 +229,15 @@ function drop(ev, el) {
 
     if (targeted == "waiting") {
         $("#cat" + thisId).val("1");
-        checkCat()
     } else if (targeted == "inprogress") {
         $("#cat" + thisId).val("2");
-        checkCat()
     } else if (targeted == "complete") {
         $("#cat" + thisId).val("3");
-        checkCat();
     } else {
-
         calUpdate = false;
     }
+    checkCat()
 
-    
     if (calUpdate) {
         var taskForm = document.getElementById("form"+thisId);
         var data = $(taskForm).serialize()
