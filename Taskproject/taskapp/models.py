@@ -11,8 +11,8 @@ from django.shortcuts import reverse
 class Task(models.Model):
 	
 	user 		 = models.ForeignKey(User, on_delete=models.CASCADE)
-	title		 = models.CharField(max_length=100)
-	content 	 = models.TextField(default="")
+	title		 = models.CharField(max_length=50)
+	content 	 = models.TextField(max_length= 100, default="")
 	category 	 = models.CharField(max_length=1, default=1)
 	created_date = models.DateTimeField(default=timezone.now)
 	started_date = models.DateTimeField(blank=True, null=True)

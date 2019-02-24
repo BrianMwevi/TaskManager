@@ -68,6 +68,4 @@ class TaskDelete(RetrieveDestroyAPIView):
 	def get_queryset(self, *args, **kwargs):
 		# tasks = Task.objects.get(pk=self.request.method.delete())
 		tasks = Task.objects.filter(user=self.request.user)
-		print(self.request.method[0])
-		print(tasks.count())
 		return tasks

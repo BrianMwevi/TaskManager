@@ -1,4 +1,3 @@
-alert("Hello world from custom.js")
 var formTokenValue = document.getElementsByName('csrfmiddlewaretoken')[0].value;
 var requestSent = false;
 
@@ -117,23 +116,23 @@ function parseTasks(data){
 
 function loopTasks(cat, updated, dropped){
 
-    var taskId = cat.id;
-    var title = cat.title;
-    var content = cat.content;
-    var taskCat = cat.category;
-    var createdDate = cat.created_date;
-    var endDate = cat.end_date;
+    var taskId       = cat.id;
+    var title        = cat.title;
+    var formContent  = cat.content
+    var content      = formContent.split(" ").slice(0,7).join(" ");
+    var taskCat      = cat.category;
+    var createdDate  = cat.created_date;
+    var endDate      = cat.end_date;
     var tasksDisplay = "<form method='POST' class='gradient collapse mb-1 rounded' id='form" + taskId + "'" + "><input type='hidden' name='category' value='" + taskCat + "' id='cat" + taskId +"'" +
                         "><input type='hidden'  name='csrfmiddlewaretoken' value='" + formTokenValue + "'" + " id='token" + taskId + "'" + "><div></div><div class='form-group'>\
                         <span closeUpdate'><i class='fa fa-close float-right btn-dark p-2' id='close" + taskId + "'" + " ></i></span><input type='text'\
                         class='form-control form_create bg-transparent border-0' required value='" + title+ "'" + " name='title' autofocus='' id='title" + taskId + "'" + "></div>\
-                        <div class='form-group'><textarea name='content' class='form_create bg-transparent form-control border-0' required='' autofocus='' id='content" + taskId + "'" + ">" + content + "</textarea></div>\
+                        <div class='form-group'><textarea name='content' class='form_create bg-transparent form-control border-0' required='' autofocus='' id='content" + taskId + "'" + ">" + formContent + "</textarea></div>\
                         <button type='submit' class='btn btn-custom' id='submit" + taskId + "'" + ">Update</button></form></div><div draggable='true' ondragstart='drag(event)'\
-                        id='card" + taskId + "'" + " class='card gradient collapse task-card py-2 pl-3'><span><h5 class='d-inline py-4' id='header" + taskId + "'" + "> " + title +
-                        "</h5><span class='float-right'><i class='edit btn btn-sm fa fa-pencil' onclick='updateForm(event)' id='" + taskId + "'" + ">\
-                        </i><i class='delete btn btn-sm fa' onclick='deleteTask(event)' id='delete" + taskId + "'" + "></i></span></span><small id='date" + taskId + "' class='py-1'>" + createdDate + "</small></div>"
+                        id='card" + taskId + "'" + " class='card gradient collapse task-card py-2 pl-3'><span><h5 class='d-inline' id='header" + taskId + "'" + "><strong>" + title +
+                        "</strong></h5><span class='float-right'><i class='edit btn btn-sm fa fa-pencil' onclick='updateForm(event)' id='" + taskId + "'" + ">\
+                        </i><i class='delete btn btn-sm fa' onclick='deleteTask(event)' id='delete" + taskId + "'" + "></i></span></span><p class='m-0 p-0'>" + content + " <br><small class='p-0 m-0' id='date" + taskId + "'>" + createdDate + "</small></p></div>"
     if (cat.category == 1) {
-        
         if (updated) {
             $("#card" + taskId).replaceWith(tasksDisplay);
         } else if(dropped) {
@@ -141,14 +140,11 @@ function loopTasks(cat, updated, dropped){
             $("#waitingTasks").append(tasksDisplay);
         }else {
             waiting += 1
-
             $("#waitingTasks").before(tasksDisplay);
         }
         $("#delete" + taskId).addClass("fa-close")
         taskSummary()
-
     } else if (cat.category == 2) {
-
         if (updated) {
             $("#card" + taskId).replaceWith(tasksDisplay);
         } else if(dropped) {
@@ -158,7 +154,6 @@ function loopTasks(cat, updated, dropped){
             inprogress += 1
             $("#inprogressTasks").append(tasksDisplay);
         }
-        // document.getElementById("card" + taskId).style.opacity = ".95";
         $("#delete" + taskId).addClass("fa-close")
         $("#date" + taskId).replaceWith("<small id='date" + taskId + "' class='py-1'><span class='fa fa-square pr-1'></span>" + createdDate + "</small>")
         taskSummary()
@@ -186,17 +181,12 @@ function allowDrop(ev) {
     ev.preventDefault();
 }
 var whatCat;
-
 function drag(ev) {
     ev.dataTransfer.setData("text", ev.target.id);
     var element = ev.currentTarget.id;
     var thisId = element.substring("4")
-
     whatCat = $("#cat" + thisId).val()
 }
-
-// Dropped target
-
 
 // On drop update the DB and delete the later
 function drop(ev, el) {
@@ -206,17 +196,13 @@ function drop(ev, el) {
     // var thisId = data.substring("4");
     var sendUrl = "/api/tasks/update/" + thisId + "/"    
     var targeted = (ev.currentTarget.id);
-
     function checkCat() {
         var cat = $("#cat" +  thisId).val();
         if (cat == whatCat) {
             calUpdate = false;  
         }
         else {
-            ev.target.appendChild(document.getElementById("card" + thisId));
-
             calUpdate = true
-
             if (whatCat == 1) {
                 waiting -= 1    
             } else if (whatCat == 2) {
@@ -227,7 +213,6 @@ function drop(ev, el) {
             }
         }
     }
-
     if (targeted == "waiting") {
         $("#cat" + thisId).val("1");
     } else if (targeted == "inprogress") {
@@ -238,25 +223,18 @@ function drop(ev, el) {
         calUpdate = false;
     }
     checkCat()
-
     if (calUpdate) {
         var taskForm = document.getElementById("form"+thisId);
         var data = $(taskForm).serialize()
         $(taskForm).remove()
         $("#card" + thisId).remove()
-       
         updateTask(data, sendUrl, thisId, true)
-
     } else {
-
         console.log("Dropped in the same category!")
     }
-    
 }
-
 // Getting the tasks from the database
 function fetchTasks(){
-
     $.ajax({
         url : "/api/tasks/",
         method : "GET",
@@ -264,33 +242,24 @@ function fetchTasks(){
         success : function(data){
             parseTasks(data)
             taskSummary()
-            
             var filter = ($("#waitingTasks").find())
-            // console.log(filter)
-
-
-
         },
         errors : function(data){
             alert("Errors")
         },
     });
 }
-
 // Creating New Tasks
 function newTask() {
     $("#createForm").toggle(250);
     $("#noNew").toggle(250)
 }
-
-
 function createForm(event){
     event.preventDefault();
         if (!requestSent) {
             requestSent = true;
             var thisData = $("#createForm");
             var formData = thisData.serialize();
-
             $.ajax({
                 url     : "/api/tasks/create/",
                 method  : "POST",
@@ -312,7 +281,6 @@ function createForm(event){
             })
         }
 };
-
 // Updating existing tasks
 function updateForm(event){
 
@@ -320,19 +288,17 @@ function updateForm(event){
     var formId = $("#form" + thisId);
     var cardId = $("#card" + thisId);
     var formUrl = "/api/tasks/update/" + thisId + "/"
-
     // Hide task and show form
-    $(formId).show(200, function(){
+    $(formId).slideDown(150, function(){
         $(cardId).slideUp(100);
     })
-
     // Hide form and show task
     $("#close" + thisId).click(function(){
-        $(formId).hide(250, function(){
-            $(cardId).slideDown(100)
+        $(formId).slideUp(250, function(){
+            $(cardId).show(0)
+            document.getElementById("form" + thisId).reset()
         })
     })
-
     // Submit data, hide form, hide task
     $(formId).submit(function(event){
         event.preventDefault()
@@ -340,20 +306,14 @@ function updateForm(event){
         var formData = $(this).serialize()
         updateTask(formData, formUrl, thisId)
     })
-
 }
-
 // Ajax post call
 function csrfSafeMethod(method) {
         // these HTTP methods do not require CSRF protection
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
-
 // Before sending the data
- 
-
 function updateTask(formData, sendUrl, taskId, dropped){
-
     $.ajax({
         url : sendUrl,
         method : "PUT",
@@ -370,15 +330,12 @@ function updateTask(formData, sendUrl, taskId, dropped){
                 loopTasks(data, true, false)
                 $("#card" + taskId).show(100)
             }
-            
-                
         },
         errors : function(data){
             alert("Errors")
         },
   })
 }
-
 function deleteTask(event) {
     var rawId = event.target.id;
     var thisId = rawId.substring("6")
@@ -388,7 +345,6 @@ function deleteTask(event) {
     taskSummary()
     console.log("Delete initiated!")
 }
-
 // Delete the hidden element in the DB
 function dbDelete(taskId, url) {
     $.ajax({
@@ -419,7 +375,6 @@ function dbDelete(taskId, url) {
         },
     })
 }
-
 function autoDelete(hours, mins, secs) {
     if (secs == 0) {
 
@@ -427,5 +382,4 @@ function autoDelete(hours, mins, secs) {
     if (hours == hrDel &&  mins == minDel && secs == secDel) {
         console.log("Delete == true")
     }
-    // console.log(hrDel, minDel, secDel)
 }
